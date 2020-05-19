@@ -1,0 +1,31 @@
+$darkest: #0b0c10;
+$secondDarkest: #1f2833;
+$grey: #c5c6c7;
+$tealLight: #66fcf1;
+$oceanGreen: #45a29e;
+
+.App {
+  text-align: center;
+  font-size: 62.5%;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/*Global */
+
+/* Marketing Screen */
+
+/*Upload Screen */
+.jsonupload {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: $darkest;
+}
+.copyJSON {
+  resize: none;
+  background-color: $secondDarkest;
+  color: $tealLight;
+}
