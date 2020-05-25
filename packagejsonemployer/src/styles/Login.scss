@@ -1,0 +1,56 @@
+/*login and register */
+.border {
+  width: 100%;
+  position: relative;
+  border: none;
+  border-bottom: 2px solid #d9d9d9;
+  padding-bottom: 13px;
+  margin-top: 0%;
+  outline: none;
+}
+.sameLine {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.wholeForm {
+  width: 100%;
+  height: 78vh;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, green, purple);
+}
+.loginButton {
+  margin-top: 5%;
+  color: white;
+  background-color: red;
+  border-radius: 15px;
+  padding: 1% 5%;
+  width: 125px;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid black;
+  outline: 0;
+}
+.loginButton:hover {
+  background-color: #ff160e;
+}
+.loginFooter {
+  height: 22vh;
+}
+.login h1 {
+  font-size: 2.6rem;
+  color: white;
+  font-weight: 100;
+}
+.searchifyTitle {
+  font-size: 3.3rem;
+  font-weight: 100;
+}
+.login h2 {
+  font-size: 1.4rem;
+  color: white;
+}
