@@ -1,40 +1,38 @@
-interface collaborator {
-  name: string;
-  company?: string;
-  avatarURL?: string;
-  followers?: number;
-  following?: number;
-  bio?: string;
-  hireable?: boolean;
-}
-interface dataObject {
-  packageName: string;
-  packageRepo: string;
-  collaborators: collaborator[];
-}
-async function getDependencyInfo(value: string) {
+import { dataObject, collaborator } from "../types/DataObject";
+
+export async function getDependencyInfo(value: string, token: string) {
   let response = await fetch(
-    `https://api.github.com/search/repositories?q=${value}&sort=stars&order=desc`
+    `https://api.github.com/search/repositories?q=${value}&sort=stars&order=desc`,
+    {
+      headers: {
+        Authorization: "token " + token,
+      },
+    }
   );
   let data = await response.json();
   return data;
 }
-export const getData = async (dependencies: string[]) => {
-  var count = 0;
-  var data: dataObject[];
-  for (const dependency of dependencies) {
-    if (count <= 5) {
-      try {
-        const somestuff = await getDependencyInfo(dependency);
-        console.log(somestuff);
-        const packName: string = dependency;
-        // const packRepo: string = somestuff.htmlurl;
-      } catch (err) {
-        console.log(err);
-      }
-    } else {
-      break;
-    }
-    count++;
-  }
-};
+export async function getContributorsInfo(
+  contributorsURL: string,
+  token: string
+) {
+  let response = await fetch(contributorsURL, {
+    headers: {
+      Authorization: "token " + token,
+    },
+  });
+  let data = await response.json();
+  return data;
+}
+export async function getContributorsAccount(
+  contribuerURL: string,
+  token: string
+) {
+  let response = await fetch(contribuerURL, {
+    headers: {
+      Authorization: "token " + token,
+    },
+  });
+  let data = await response.json();
+  return data;
+}
