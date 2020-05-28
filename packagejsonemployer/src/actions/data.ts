@@ -1,4 +1,4 @@
-import { dumbyData } from "./../functions/dumbyData";
+import { dumbyData, dumbyDataGraph } from "./../functions/dumbyData";
 import { AppState } from "./../store/configureStore";
 import {
   AppActions,
@@ -26,6 +26,8 @@ export const getData = (dependencies: string[], token: string) => {
         const githubPackage = dependancyInfo.items[0];
         const packApiRepo = githubPackage.url;
         const packRepo: string = githubPackage.html_url;
+        const packStarGazers: number = githubPackage.stargazers_count;
+        const language = githubPackage.language;
         var contributersArray: collaborator[] = [];
         const contributersInfo = await getContributorsInfo(
           githubPackage.contributors_url,
@@ -36,6 +38,8 @@ export const getData = (dependencies: string[], token: string) => {
           contributersInfo[1],
           contributersInfo[2],
           contributersInfo[3],
+          contributersInfo[4],
+          contributersInfo[5],
         ];
         for (const singleContributer of topContributors) {
           const contributerAccount = await getContributorsAccount(
@@ -51,6 +55,11 @@ export const getData = (dependencies: string[], token: string) => {
             following: contributerAccount.following,
             bio: contributerAccount.bio,
             hireable: contributerAccount.hireable,
+            contributions: singleContributer.contributions,
+            type: contributerAccount.type,
+            login: contributerAccount.login,
+            location: contributerAccount.location,
+            githubURL: contributerAccount.html_url,
           };
           contributersArray.push(contributor);
           id++;
@@ -60,6 +69,8 @@ export const getData = (dependencies: string[], token: string) => {
           packageApiRepo: packApiRepo,
           packageRepo: packRepo,
           collaborators: contributersArray,
+          starGazers: packStarGazers,
+          language: language,
         };
         data.push(singleDependData);
       } else {
@@ -69,7 +80,11 @@ export const getData = (dependencies: string[], token: string) => {
     }
     var tableFormattedData: graphData[] = [];
     for (const singleRepo of data) {
+      var rankCount = 1;
       for (const singleContributer of singleRepo.collaborators) {
+        if (singleContributer.type !== "User") {
+          rankCount--;
+        }
         const gridFormatting: graphData = {
           id: singleContributer.id,
           name: singleContributer.name,
@@ -80,35 +95,33 @@ export const getData = (dependencies: string[], token: string) => {
           following: singleContributer.following,
           bio: singleContributer.bio,
           hireable: singleContributer.hireable,
+          starGazers: singleRepo.starGazers,
+          language: singleRepo.language,
+          contributions: singleContributer.contributions,
+          type: singleContributer.type,
+          login: singleContributer.login,
+          location: singleContributer.location,
+          githubURL: singleContributer.githubURL,
+          packageRank: rankCount,
         };
         tableFormattedData.push(gridFormatting);
+        rankCount++;
       }
     }
-    dispatch(postDataSuccess(data, tableFormattedData));
+    const formattedData = tableFormattedData.filter(
+      (element) => element.type === "User"
+    );
+    console.log(formattedData);
+    console.log(JSON.stringify(formattedData));
+
+    dispatch(postDataSuccess(data, formattedData));
   };
 };
 export const setData = () => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());
-    var data: dataObject[] = dumbyData;
-    var tableFormattedData: graphData[] = [];
-    for (const singleRepo of data) {
-      for (const singleContributer of singleRepo.collaborators) {
-        const gridFormatting: graphData = {
-          id: singleContributer.id,
-          name: singleContributer.name,
-          packageName: singleRepo.packageName,
-          company: singleContributer.company,
-          avatarURL: singleContributer.avatarURL,
-          followers: singleContributer.followers,
-          following: singleContributer.following,
-          bio: singleContributer.bio,
-          hireable: singleContributer.hireable,
-        };
-        tableFormattedData.push(gridFormatting);
-      }
-    }
-    dispatch(postDataSuccess(data, tableFormattedData));
+
+    dispatch(postDataSuccess(dumbyData, dumbyDataGraph));
   };
 };
 export const postDataStart = (): AppActions => ({

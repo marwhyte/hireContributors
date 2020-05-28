@@ -4,6 +4,8 @@ import "../styles/Home.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
+import "react-responsive-modal/styles.css";
+import { Modal } from "react-responsive-modal";
 
 //redux
 import { connect } from "react-redux";
@@ -14,6 +16,7 @@ import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
 import { RouteComponentProps } from "react-router-dom";
+import { dumbyDataGraph } from "../functions/dumbyData";
 
 interface DispatchProps {}
 
@@ -34,142 +37,19 @@ type Props = DispatchProps & StateProps & OwnProps;
 
 const Home = (props: Props) => {
   const [token, setToken] = React.useState("");
-  const [dumbData, setDumbData] = React.useState([
-    {
-      id: 0,
-      name: "Daniel Trojanowski",
-      packageName: "apollo/react-hooks",
-      company: null,
-      avatarURL: "https://avatars3.githubusercontent.com/u/1078103?v=4",
-      followers: 52,
-      following: 8,
-      bio: null,
-      hireable: null,
-    },
-    {
-      id: 1,
-      name: "Umidbek Karimov",
-      packageName: "apollo/react-hooks",
-      company: "@superdispatch ",
-      avatarURL: "https://avatars2.githubusercontent.com/u/4734297?v=4",
-      followers: 42,
-      following: 10,
-      bio: "*.{js,ts}",
-      hireable: null,
-    },
-    {
-      id: 2,
-      name: null,
-      packageName: "apollo/react-hooks",
-      company: null,
-      avatarURL: "https://avatars0.githubusercontent.com/in/29110?v=4",
-      followers: 0,
-      following: 0,
-      bio: null,
-      hireable: null,
-    },
-    {
-      id: 3,
-      name: "Daniel K.",
-      packageName: "apollo/react-hooks",
-      company: null,
-      avatarURL: "https://avatars0.githubusercontent.com/u/1096340?v=4",
-      followers: 73,
-      following: 14,
-      bio: null,
-      hireable: null,
-    },
-    {
-      id: 4,
-      name: "Vojtech Novak",
-      packageName: "react-native-community/datetimepicker",
-      company: null,
-      avatarURL: "https://avatars1.githubusercontent.com/u/1566403?v=4",
-      followers: 143,
-      following: 1,
-      bio: "React Native, Java and Objective-C.",
-      hireable: null,
-    },
-    {
-      id: 5,
-      name: "luancurti",
-      packageName: "react-native-community/datetimepicker",
-      company: "@Gympass",
-      avatarURL: "https://avatars2.githubusercontent.com/u/7242605?v=4",
-      followers: 36,
-      following: 31,
-      bio: "Mobile at @Gympass and Member of @react-native-community",
-      hireable: null,
-    },
-    {
-      id: 6,
-      name: "Martijn Swaagman",
-      packageName: "react-native-community/datetimepicker",
-      company: "@godaddy",
-      avatarURL: "https://avatars1.githubusercontent.com/u/670951?v=4",
-      followers: 102,
-      following: 32,
-      bio: "@nodejs - fullstack - devops - learning @rust-lang",
-      hireable: true,
-    },
-    {
-      id: 7,
-      name: null,
-      packageName: "react-native-community/datetimepicker",
-      company: null,
-      avatarURL: "https://avatars2.githubusercontent.com/u/59091618?v=4",
-      followers: 0,
-      following: 0,
-      bio: null,
-      hireable: null,
-    },
-    {
-      id: 8,
-      name: "Mike Nedosekin",
-      packageName: "react-native-community/masked-view",
-      company: null,
-      avatarURL: "https://avatars3.githubusercontent.com/u/778724?v=4",
-      followers: 11,
-      following: 3,
-      bio: null,
-      hireable: null,
-    },
-    {
-      id: 9,
-      name: "Ilja Daderko",
-      packageName: "react-native-community/masked-view",
-      company: "@Asimetriq ",
-      avatarURL: "https://avatars2.githubusercontent.com/u/3154053?v=4",
-      followers: 64,
-      following: 9,
-      bio: "Software Engineer",
-      hireable: true,
-    },
-    {
-      id: 10,
-      name: "Jesse Katsumata",
-      packageName: "react-native-community/masked-view",
-      company: "@react-native-community",
-      avatarURL: "https://avatars1.githubusercontent.com/u/6936373?v=4",
-      followers: 125,
-      following: 92,
-      bio:
-        "Engineer @CureApp \r\nMember of @react-native-community and @reason-react-native.\r\nMaintaining Japanese Translation of @gatsbyjs",
-      hireable: null,
-    },
-    {
-      id: 11,
-      name: "Christoph Nakazawa",
-      packageName: "react-native-community/masked-view",
-      company: "Facebook",
-      avatarURL: "https://avatars0.githubusercontent.com/u/13352?v=4",
-      followers: 2569,
-      following: 19,
-      bio:
-        "Formerly Pojer · 👨🏻‍💻 Engineering Manager at Facebook · 🚇 Metro · 🃏 Jest · 📦 Yarn",
-      hireable: null,
-    },
-  ]);
+  const [open, setOpen] = React.useState(false);
+  const [modalInfo, setModalInfo] = React.useState<graphData>({
+    id: 0,
+    name: "sample",
+    packageName: "sample",
+    company: "sample",
+    avatarURL: "sample",
+    followers: 52,
+    following: 8,
+    bio: "sample",
+    hireable: null,
+  });
+  const [dumbData, setDumbData] = React.useState(dumbyDataGraph);
   //   React.useEffect(() => {
   //     console.log("graphdata", props.gridData);
   //     var parsed = queryString.parse(window.location.search);
@@ -189,18 +69,7 @@ const Home = (props: Props) => {
   //       }
   //     }
   //   }, [props.loading]);
-  const columns = [
-    { key: "id", name: "ID" },
-    { key: "name", name: "Name" },
-    { key: "packageName", name: "Dependency" },
-    { key: "company", name: "Company" },
-    { key: "avatarURL", name: "Picture" },
-    { key: "followers", name: "Followers" },
-    { key: "following", name: "Following" },
-    { key: "bio", name: "Bio" },
-    { key: "hireable", name: "Hireable" },
-  ];
-  const rows = props.gridData;
+
   return (
     <div className="home">
       <h1>home page</h1>
@@ -226,7 +95,15 @@ const Home = (props: Props) => {
                 <p>{person.company}</p>
               </div>
               <div className="personButtons">
-                <button className="infoButton">More Info</button>
+                <button
+                  className="infoButton"
+                  onClick={() => {
+                    setModalInfo(person);
+                    setOpen(true);
+                  }}
+                >
+                  More Info
+                </button>
                 <button className="inbox">
                   <FontAwesomeIcon icon={faEnvelopeOpenText} />
                 </button>
@@ -237,6 +114,46 @@ const Home = (props: Props) => {
       ) : (
         <p>loading table</p>
       )}
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        center
+        classNames={{
+          overlay: "customOverlay",
+          modal: "customModal",
+        }}
+      >
+        <p className="moreAbout">More about {modalInfo.name}</p>
+
+        {modalInfo.avatarURL !== null && (
+          <img
+            src={modalInfo.avatarURL}
+            alt="Users Github Profile"
+            className="profilePictureMore"
+          />
+        )}
+        <h1 className="moreMainName">
+          {modalInfo.name}
+          <span className="location">{modalInfo.location}</span>
+        </h1>
+        <div className="ptags">
+          <p className="infoPTag">
+            <span className="bio">Bio:</span>
+            <br></br> {modalInfo.bio}
+          </p>
+          <p>
+            Package:
+            <FontAwesomeIcon icon={faBoxOpen} style={{ marginRight: 5 }} />
+            {modalInfo.packageName}
+          </p>
+          <p>Company: {modalInfo.company}</p>
+          <p>Hireable: {modalInfo.hireable}</p>
+          <div>
+            <p>Followers: {modalInfo.followers}</p>
+            <p>Following:{modalInfo.following}</p>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500&display=swap");
+
 .home {
   display: flex;
   flex-direction: column;
@@ -5,6 +7,7 @@
   width: 100%;
   min-height: 100vh;
   text-align: center;
+  font-family: "Archivo Narrow", sans-serif;
 }
 
 .wholeGrid {
@@ -64,4 +67,83 @@
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
+}
+.react-responsive-modal-overlay {
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-start;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 1000;
+  padding: 1.2rem;
+}
+
+.react-responsive-modal-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 1650px;
+  height: 540px;
+  position: relative;
+  padding: 1.2rem;
+  background: #fff;
+  background-clip: padding-box;
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.25);
+  margin: 0 auto;
+}
+.customModal {
+  width: 1650px;
+}
+.profilePictureMore {
+  height: 180px;
+  width: 180px;
+  border-radius: 100px;
+  margin: 0 auto;
+}
+.ptags {
+  width: 100%;
+  p {
+    margin: 0.7%;
+  }
+}
+.moreAbout {
+  text-align: left;
+  width: 100%;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 20px;
+  color: #333333;
+}
+.moreMainName {
+  text-align: center;
+  padding-bottom: 20px;
+  margin: 5px auto;
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.1;
+  color: #333333;
+  border-bottom: 1px solid #e5e5e5;
+  width: 100%;
+  .location {
+    font-weight: 400;
+    line-height: 1;
+    color: #999;
+    margin-left: 10px;
+    font-size: 1rem;
+  }
+}
+
+.infoPTag {
+  font-size: 0.9rem;
+  .bio {
+    font-size: 1rem;
+    line-height: 1.428571429;
+    color: #333333;
+    font-weight: 700;
+  }
 }

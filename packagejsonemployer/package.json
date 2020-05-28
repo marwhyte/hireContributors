@@ -29,6 +29,7 @@
     "react-hook-form": "^5.7.2",
     "react-json-view": "^1.19.1",
     "react-redux": "^7.2.0",
+    "react-responsive-modal": "^5.0.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
