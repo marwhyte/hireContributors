@@ -4,6 +4,9 @@ import "../styles/Home.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
 import { faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
+import { faAward } from "@fortawesome/free-solid-svg-icons";
+import { faUsers } from "@fortawesome/free-solid-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 
@@ -136,21 +139,80 @@ const Home = (props: Props) => {
           {modalInfo.name}
           <span className="location">{modalInfo.location}</span>
         </h1>
+        <div className="moreAllPackageInfo">
+          <p className="packageNameMoreBold">
+            Package Info:{" "}
+            <span
+              className="packageLink"
+              onClick={() => window.open(modalInfo.githubURL, "_blank")}
+            >
+              {modalInfo.packageName}
+            </span>
+            <span className="stargazersMore">{modalInfo.starGazers}</span>
+            {"  "} <span className="packageInfoMore"> stargazers</span>
+            {"  "} <span className="stargazersMore"> Language: </span>
+            <span className="packageInfoMore">{modalInfo.language}</span>
+          </p>
+
+          <FontAwesomeIcon
+            icon={faAward}
+            size="2x"
+            className="awardIcon"
+            style={
+              modalInfo.packageRank === 1
+                ? { color: "#FFDF00" }
+                : modalInfo.packageRank === 2
+                ? { color: "	#C0C0C0" }
+                : { color: "#cd7f32" }
+            }
+          />
+          <p className="packageInfoMore">
+            contributor #{modalInfo.packageRank}
+          </p>
+        </div>
         <div className="ptags">
-          <p className="infoPTag">
-            <span className="bio">Bio:</span>
-            <br></br> {modalInfo.bio}
+          <p className={modalInfo.bio !== null ? "infoPTag" : "displayNone"}>
+            <span className="boldMore">Bio:</span>
+            {modalInfo.bio}
           </p>
-          <p>
-            Package:
-            <FontAwesomeIcon icon={faBoxOpen} style={{ marginRight: 5 }} />
-            {modalInfo.packageName}
+          <p
+            className={modalInfo.company !== null ? "infoPTag" : "displayNone"}
+          >
+            Company: {modalInfo.company}
           </p>
-          <p>Company: {modalInfo.company}</p>
-          <p>Hireable: {modalInfo.hireable}</p>
-          <div>
-            <p>Followers: {modalInfo.followers}</p>
-            <p>Following:{modalInfo.following}</p>
+          {modalInfo.hireable ? (
+            <p className="infoPTag">Hireable: Yes</p>
+          ) : (
+            <div className="displayNone"></div>
+          )}
+          <div className="followers">
+            <p className="followerMargin">
+              <span className="boldMore">
+                <FontAwesomeIcon icon={faGithub} className="usersIcon" />
+                Github Profile:
+              </span>
+              <span
+                className="loginInfoMore"
+                onClick={() => window.open(modalInfo.githubURL, "_blank")}
+              >
+                {modalInfo.login}
+              </span>
+            </p>
+            <p className="followerMargin">
+              <span className="boldMore">
+                <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                Followers:
+              </span>
+              {modalInfo.followers}
+            </p>
+
+            <p>
+              <span className="boldMore">
+                <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                Following:
+              </span>
+              {modalInfo.following}
+            </p>
           </div>
         </div>
       </Modal>

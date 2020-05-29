@@ -11,7 +11,7 @@ export interface collaborator {
   type?: string | null;
   login?: string | null;
   location?: string | null;
-  githubURL?: string | null;
+  githubURL?: string;
   packageRank?: number;
 }
 export interface dataObject {
@@ -38,6 +38,6 @@ export interface graphData {
   type?: string | null;
   login?: string | null;
   location?: string | null;
-  githubURL?: string | null;
+  githubURL?: string;
   packageRank?: number;
 }

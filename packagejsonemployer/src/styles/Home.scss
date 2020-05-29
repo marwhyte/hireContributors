@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500&display=swap");
-
+$purple: #9932cc;
 .home {
   display: flex;
   flex-direction: column;
@@ -41,14 +41,14 @@
   }
   .infoButton {
     background-color: #fff;
-    border: 1px solid #9932cc;
-    color: #9932cc;
+    border: 1px solid $purple;
+    color: $purple;
     padding: 7px;
   }
   .inbox {
     background-color: #fff;
-    border: 1px solid #9932cc;
-    color: #9932cc;
+    border: 1px solid $purple;
+    color: $purple;
     padding: 7px;
   }
 }
@@ -108,6 +108,7 @@
 }
 .ptags {
   width: 100%;
+  padding-top: 10px;
   p {
     margin: 0.7%;
   }
@@ -121,13 +122,11 @@
 }
 .moreMainName {
   text-align: center;
-  padding-bottom: 20px;
   margin: 5px auto;
   font-size: 1.3rem;
   font-weight: 500;
   line-height: 1.1;
   color: #333333;
-  border-bottom: 1px solid #e5e5e5;
   width: 100%;
   .location {
     font-weight: 400;
@@ -139,11 +138,80 @@
 }
 
 .infoPTag {
+  text-align: center;
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.1;
   font-size: 0.9rem;
-  .bio {
-    font-size: 1rem;
-    line-height: 1.428571429;
-    color: #333333;
-    font-weight: 700;
+  width: 100%;
+  padding-bottom: 10px;
+}
+.loginInfoMore {
+  color: $purple;
+  &:hover {
+    color: #550080;
+    cursor: pointer;
   }
+}
+.moreAllPackageInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 10px 0;
+}
+.awardIcon {
+  margin-right: 10px;
+}
+.packageInfoMore {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.1;
+  color: #999;
+}
+.packageNameMoreBold {
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.1;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  margin-right: 30px;
+  .stargazersMore {
+    margin-left: 30px;
+  }
+}
+.packageLink {
+  color: $purple;
+  &:hover {
+    color: #550080;
+    cursor: pointer;
+  }
+}
+.displayNone {
+  display: none;
+}
+.followers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.1;
+  font-size: 0.9rem;
+  width: 100%;
+}
+.boldMore {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-right: 5px;
+}
+.followerMargin {
+  margin-right: 35px !important;
+}
+.usersIcon {
+  color: $purple;
+  margin-right: 7px;
 }
