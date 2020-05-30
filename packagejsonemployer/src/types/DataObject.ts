@@ -2,7 +2,7 @@ export interface collaborator {
   id: number;
   name: string | null;
   company?: string | null;
-  avatarURL?: string | null;
+  avatarURL?: string;
   followers?: number | null;
   following?: number | null;
   bio?: string | null;
@@ -29,7 +29,7 @@ export interface graphData {
   starGazers?: number | null;
   language?: string | null;
   company?: string | null;
-  avatarURL?: string | null;
+  avatarURL?: string;
   followers?: number | null;
   following?: number | null;
   bio?: string | null;

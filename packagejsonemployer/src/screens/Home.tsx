@@ -52,7 +52,7 @@ const Home = (props: Props) => {
     bio: "sample",
     hireable: null,
   });
-  const [dumbData, setDumbData] = React.useState(dumbyDataGraph);
+  const [dumbData, setDumbData] = React.useState(props.gridData);
   //   React.useEffect(() => {
   //     console.log("graphdata", props.gridData);
   //     var parsed = queryString.parse(window.location.search);

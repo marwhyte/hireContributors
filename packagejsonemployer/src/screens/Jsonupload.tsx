@@ -38,11 +38,11 @@ const Jsonupload = (props: Props) => {
   const [jsonSource, setJsonSource] = React.useState("");
   const [parsedJson, setParsedJson] = React.useState({ dependencies: "" });
   const [token, setToken] = React.useState("");
-  // React.useEffect(() => {
-  //   if (props.tableData) {
-  //     props.history.push(`/home?access_token=${token}`);
-  //   }
-  // }, [props.tableData]);
+  React.useEffect(() => {
+    if (props.tableData) {
+      props.history.push(`/home?access_token=${token}`);
+    }
+  }, [props.tableData]);
   React.useEffect(() => {
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;

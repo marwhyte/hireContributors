@@ -109,7 +109,7 @@ export const getData = (dependencies: string[], token: string) => {
       }
     }
     const formattedData = tableFormattedData.filter(
-      (element) => element.type === "User"
+      (element) => element.type === "User" && element.name !== null
     );
     console.log(formattedData);
     console.log(JSON.stringify(formattedData));
