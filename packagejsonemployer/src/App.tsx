@@ -7,6 +7,7 @@ import { store } from "./store/configureStore";
 import Jsonupload from "./screens/Jsonupload";
 import Login from "./screens/Login";
 import Home from "./screens/Home";
+import EmailTemplate from "./screens/EmailTemplate";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/try-it" component={Jsonupload} />
             <Route path="/login" component={Login} />
             <Route path="/home" component={Home} />
+            <Route path="/email-template" component={EmailTemplate} />
           </Switch>
         </Router>
       </div>
