@@ -3,6 +3,9 @@ $secondDarkest: #1f2833;
 $grey: #c5c6c7;
 $tealLight: #66fcf1;
 $oceanGreen: #45a29e;
+html {
+  overflow-y: scroll;
+}
 
 .App {
   text-align: center;

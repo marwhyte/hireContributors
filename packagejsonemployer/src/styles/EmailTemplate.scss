@@ -6,13 +6,13 @@
   height: 100vh;
 }
 .containerEmailCreator {
+  padding-top: 110px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
   text-align: left;
   padding-left: 100px;
-  padding-top: 30px;
 }
 .emailCreator {
   resize: none;
@@ -50,7 +50,6 @@
 }
 .templateButton {
   background-color: #0c84e4;
-  font-family: "Droid Sans", sans-serif;
   height: 40px;
   width: 150px;
   margin: 10px 30px 30px 0;
@@ -76,6 +75,36 @@
   width: 150%;
   height: 500%;
   background: #1074c3;
+  border-radius: 100%;
+  opacity: 0;
+}
+.templateButtonGreen {
+  background-color: #09aa11;
+  height: 40px;
+  width: 150px;
+  margin: 10px 30px 30px 0;
+  border: none;
+  border-bottom: 2px solid #08960f;
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  &:hover {
+    background-color: #08960f;
+  }
+}
+
+.templateButtonGreen:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -200%;
+  right: -25%;
+  width: 150%;
+  height: 500%;
+  background: #08960f;
   border-radius: 100%;
   opacity: 0;
 }
@@ -105,5 +134,12 @@
 }
 
 .templateButton:focus:after {
+  visibility: visible;
+}
+.templateButtonGreen:after {
+  visibility: hidden;
+}
+
+.templateButtonGreen:focus:after {
   visibility: visible;
 }

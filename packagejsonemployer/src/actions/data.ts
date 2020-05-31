@@ -18,6 +18,7 @@ export const getData = (dependencies: string[], token: string) => {
     dispatch(postDataStart());
     var count = 0;
     var id = 0;
+    var packageRepos: string[] = [];
     var data: dataObject[] = [];
     for (const dependency of dependencies) {
       if (count <= 2) {
@@ -25,6 +26,7 @@ export const getData = (dependencies: string[], token: string) => {
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
         const packApiRepo = githubPackage.url;
+        packageRepos.push(packApiRepo);
         const packRepo: string = githubPackage.html_url;
         const packStarGazers: number = githubPackage.stargazers_count;
         const language = githubPackage.language;
@@ -113,9 +115,12 @@ export const getData = (dependencies: string[], token: string) => {
     );
     console.log(formattedData);
     console.log(JSON.stringify(formattedData));
-
+    localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
     dispatch(postDataSuccess(data, formattedData));
   };
+};
+export const getLocalStorageData = (parsedInfo: string[], token: string) => {
+  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {};
 };
 export const setData = () => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
