@@ -36,3 +36,12 @@ export async function getContributorsAccount(
   let data = await response.json();
   return data;
 }
+export async function getRepository(repoURL: string, token: string) {
+  let response = await fetch(repoURL, {
+    headers: {
+      Authorization: "token " + token,
+    },
+  });
+  let data = await response.json();
+  return data;
+}

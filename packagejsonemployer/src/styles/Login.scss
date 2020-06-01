@@ -21,22 +21,28 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(90deg, green, purple);
+  background: linear-gradient(90deg, #0f2027, #203a43, #2c5364);
+}
+.sweet-loading {
+  margin-top: 80px;
 }
 .loginButton {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
   margin-top: 5%;
-  color: white;
-  background-color: red;
+  color: black;
+  background-color: white;
   border-radius: 15px;
-  padding: 1% 5%;
-  width: 125px;
+  padding: 10px 20px;
+  width: 190px;
   font-size: 1rem;
   text-decoration: none;
   border: 1px solid black;
   outline: 0;
 }
 .loginButton:hover {
-  background-color: #ff160e;
+  background-color: #ccc;
 }
 .loginFooter {
   height: 22vh;

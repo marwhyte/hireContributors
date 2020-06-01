@@ -4,10 +4,20 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { faMagic } from "@fortawesome/free-solid-svg-icons";
 import "../styles/Login.scss";
+import { css } from "@emotion/core";
+import HashLoader from "react-spinners/HashLoader";
+
 interface Props {}
 
 const Login: React.FC<Props> = (props: Props) => {
   const [loading, setLoading] = React.useState(false);
+
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: blue;
+  `;
+
   return (
     <div className="login">
       <div className="wholeForm">
@@ -20,22 +30,32 @@ const Login: React.FC<Props> = (props: Props) => {
             style={{ marginLeft: "20px" }}
           />
         </div>
-
-        <a
-          href="https://jsonbackend.herokuapp.com/auth/login"
-          className="loginButton"
-          onClick={() => {
-            setLoading(true);
-          }}
-        >
-          Github Login
-          <FontAwesomeIcon
-            icon={faGithub}
-            size="2x"
-            color="white"
-            style={{ marginLeft: "20px" }}
-          />
-        </a>
+        {!loading ? (
+          <a
+            href="https://jsonbackend.herokuapp.com/auth/login"
+            className="loginButton"
+            onClick={() => {
+              setLoading(true);
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faGithub}
+              size="2x"
+              color="black"
+              style={{ marginLeft: "20px" }}
+            />{" "}
+            Github Login
+          </a>
+        ) : (
+          <div className="sweet-loading">
+            <HashLoader
+              css={override}
+              size={40}
+              color={"#FFFFFF"}
+              loading={loading}
+            />
+          </div>
+        )}
       </div>
       <div className="loginFooter">
         <div className="footer">

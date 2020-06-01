@@ -10,7 +10,8 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import Navbar from "../components/Navbar";
-
+import { css } from "@emotion/core";
+import HashLoader from "react-spinners/HashLoader";
 //redux
 import { connect } from "react-redux";
 import { getUser } from "../actions/user";
@@ -21,6 +22,7 @@ import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
 import { RouteComponentProps } from "react-router-dom";
 import { dumbyDataGraph } from "../functions/dumbyData";
+import { getLocalStorageData } from "../actions/data";
 
 interface DispatchProps {}
 
@@ -31,10 +33,12 @@ type StateProps = {
   profilePic?: string;
   data?: dataObject[];
   gridData?: graphData[];
+  isLoading: boolean;
 };
 
 interface OwnProps extends RouteComponentProps<any> {
   getUser: typeof getUser;
+  getLocalStorageData: typeof getLocalStorageData;
 }
 
 type Props = DispatchProps & StateProps & OwnProps;
@@ -53,13 +57,16 @@ const Home = (props: Props) => {
     bio: "sample",
     hireable: null,
   });
-  const [dumbData, setDumbData] = React.useState(dumbyDataGraph);
+  const [dumbData, setDumbData] = React.useState(props.gridData);
   React.useEffect(() => {
     console.log("graphdata", props.gridData);
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
   }, []);
+  React.useEffect(() => {
+    if (props.gridData) setDumbData(props.gridData);
+  }, [props.gridData]);
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
@@ -68,160 +75,189 @@ const Home = (props: Props) => {
         var parsed = queryString.parse(window.location.search);
         var accessToken: any = parsed.access_token;
         setToken(accessToken);
-        if (props.data) {
-        }
       }
     }
   }, [props.loading]);
-
+  React.useEffect(() => {
+    const localStorageInfo = localStorage.getItem("packageRepo");
+    if (props.gridData) {
+      console.log("Data In Redux Store");
+    } else if (
+      token.length !== 0 &&
+      localStorageInfo !== null &&
+      localStorageInfo !== undefined
+    ) {
+      console.log("Getting Data!");
+      props.getLocalStorageData(JSON.parse(localStorageInfo), token);
+    }
+  }, [token]);
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+  `;
   return (
     <div>
       <Navbar selected={"Home"} token={token} />
-      <div className="home">
-        <h1>home page</h1>
-        {dumbData ? (
-          <div className="wholeGrid">
-            {dumbData.map((person) => (
-              <div className="personContainer">
-                <div className="person">
-                  <img
-                    src={person.avatarURL}
-                    alt="Users Github Profile"
-                    className="profilePicture"
-                  />
-                  <h1>{person.name}</h1>
-                  <p>{person.bio}</p>
-                  <p>
-                    <FontAwesomeIcon
-                      icon={faBoxOpen}
-                      style={{ marginRight: 5 }}
+      {props.isLoading ? (
+        <div className="isLoadingHome">
+          {" "}
+          <HashLoader
+            css={override}
+            size={50}
+            color={"#9932cc"}
+            loading={props.isLoading}
+          />
+        </div>
+      ) : (
+        <div className="home">
+          <h1>home page</h1>
+          {dumbData ? (
+            <div className="wholeGrid">
+              {dumbData.map((person) => (
+                <div className="personContainer">
+                  <div className="person">
+                    <img
+                      src={person.avatarURL}
+                      alt="Users Github Profile"
+                      className="profilePicture"
                     />
-                    {person.packageName}
-                  </p>
-                  <p>{person.company}</p>
+                    <h1>{person.name}</h1>
+                    <p>{person.bio}</p>
+                    <p>
+                      <FontAwesomeIcon
+                        icon={faBoxOpen}
+                        style={{ marginRight: 5 }}
+                      />
+                      {person.packageName}
+                    </p>
+                    <p>{person.company}</p>
+                  </div>
+                  <div className="personButtons">
+                    <button
+                      className="infoButton"
+                      onClick={() => {
+                        setModalInfo(person);
+                        setOpen(true);
+                      }}
+                    >
+                      More Info
+                    </button>
+                    <button className="inbox">
+                      <FontAwesomeIcon icon={faEnvelopeOpenText} />
+                    </button>
+                  </div>
                 </div>
-                <div className="personButtons">
-                  <button
-                    className="infoButton"
-                    onClick={() => {
-                      setModalInfo(person);
-                      setOpen(true);
-                    }}
-                  >
-                    More Info
-                  </button>
-                  <button className="inbox">
-                    <FontAwesomeIcon icon={faEnvelopeOpenText} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>loading table</p>
-        )}
-        <Modal
-          open={open}
-          onClose={() => setOpen(false)}
-          center
-          classNames={{
-            overlay: "customOverlay",
-            modal: "customModal",
-          }}
-        >
-          <p className="moreAbout">More about {modalInfo.name}</p>
-
-          {modalInfo.avatarURL !== null && (
-            <img
-              src={modalInfo.avatarURL}
-              alt="Users Github Profile"
-              className="profilePictureMore"
-            />
+              ))}
+            </div>
+          ) : (
+            <p>loading table</p>
           )}
-          <h1 className="moreMainName">
-            {modalInfo.name}
-            <span className="location">{modalInfo.location}</span>
-          </h1>
-          <div className="moreAllPackageInfo">
-            <p className="packageNameMoreBold">
-              Package Info:{" "}
-              <span
-                className="packageLink"
-                onClick={() => window.open(modalInfo.githubURL, "_blank")}
-              >
-                {modalInfo.packageName}
-              </span>
-              <span className="stargazersMore">{modalInfo.starGazers}</span>
-              {"  "} <span className="packageInfoMore"> stargazers</span>
-              {"  "} <span className="stargazersMore"> Language: </span>
-              <span className="packageInfoMore">{modalInfo.language}</span>
-            </p>
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            center
+            classNames={{
+              overlay: "customOverlay",
+              modal: "customModal",
+            }}
+          >
+            <p className="moreAbout">More about {modalInfo.name}</p>
 
-            <FontAwesomeIcon
-              icon={faAward}
-              size="2x"
-              className="awardIcon"
-              style={
-                modalInfo.packageRank === 1
-                  ? { color: "#FFDF00" }
-                  : modalInfo.packageRank === 2
-                  ? { color: "	#C0C0C0" }
-                  : { color: "#cd7f32" }
-              }
-            />
-            <p className="packageInfoMore">
-              contributor #{modalInfo.packageRank}
-            </p>
-          </div>
-          <div className="ptags">
-            <p className={modalInfo.bio !== null ? "infoPTag" : "displayNone"}>
-              <span className="boldMore">Bio:</span>
-              {modalInfo.bio}
-            </p>
-            <p
-              className={
-                modalInfo.company !== null ? "infoPTag" : "displayNone"
-              }
-            >
-              Company: {modalInfo.company}
-            </p>
-            {modalInfo.hireable ? (
-              <p className="infoPTag">Hireable: Yes</p>
-            ) : (
-              <div className="displayNone"></div>
+            {modalInfo.avatarURL !== null && (
+              <img
+                src={modalInfo.avatarURL}
+                alt="Users Github Profile"
+                className="profilePictureMore"
+              />
             )}
-            <div className="followers">
-              <p className="followerMargin">
-                <span className="boldMore">
-                  <FontAwesomeIcon icon={faGithub} className="usersIcon" />
-                  Github Profile:
-                </span>
+            <h1 className="moreMainName">
+              {modalInfo.name}
+              <span className="location">{modalInfo.location}</span>
+            </h1>
+            <div className="moreAllPackageInfo">
+              <p className="packageNameMoreBold">
+                Package Info:{" "}
                 <span
-                  className="loginInfoMore"
+                  className="packageLink"
                   onClick={() => window.open(modalInfo.githubURL, "_blank")}
                 >
-                  {modalInfo.login}
+                  {modalInfo.packageName}
                 </span>
-              </p>
-              <p className="followerMargin">
-                <span className="boldMore">
-                  <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                  Followers:
-                </span>
-                {modalInfo.followers}
+                <span className="stargazersMore">{modalInfo.starGazers}</span>
+                {"  "} <span className="packageInfoMore"> stargazers</span>
+                {"  "} <span className="stargazersMore"> Language: </span>
+                <span className="packageInfoMore">{modalInfo.language}</span>
               </p>
 
-              <p>
-                <span className="boldMore">
-                  <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                  Following:
-                </span>
-                {modalInfo.following}
+              <FontAwesomeIcon
+                icon={faAward}
+                size="2x"
+                className="awardIcon"
+                style={
+                  modalInfo.packageRank === 1
+                    ? { color: "#FFDF00" }
+                    : modalInfo.packageRank === 2
+                    ? { color: "	#C0C0C0" }
+                    : { color: "#cd7f32" }
+                }
+              />
+              <p className="packageInfoMore">
+                contributor #{modalInfo.packageRank}
               </p>
             </div>
-          </div>
-        </Modal>
-      </div>
+            <div className="ptags">
+              <p
+                className={modalInfo.bio !== null ? "infoPTag" : "displayNone"}
+              >
+                <span className="boldMore">Bio:</span>
+                {modalInfo.bio}
+              </p>
+              <p
+                className={
+                  modalInfo.company !== null ? "infoPTag" : "displayNone"
+                }
+              >
+                Company: {modalInfo.company}
+              </p>
+              {modalInfo.hireable ? (
+                <p className="infoPTag">Hireable: Yes</p>
+              ) : (
+                <div className="displayNone"></div>
+              )}
+              <div className="followers">
+                <p className="followerMargin">
+                  <span className="boldMore">
+                    <FontAwesomeIcon icon={faGithub} className="usersIcon" />
+                    Github Profile:
+                  </span>
+                  <span
+                    className="loginInfoMore"
+                    onClick={() => window.open(modalInfo.githubURL, "_blank")}
+                  >
+                    {modalInfo.login}
+                  </span>
+                </p>
+                <p className="followerMargin">
+                  <span className="boldMore">
+                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                    Followers:
+                  </span>
+                  {modalInfo.followers}
+                </p>
+
+                <p>
+                  <span className="boldMore">
+                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                    Following:
+                  </span>
+                  {modalInfo.following}
+                </p>
+              </div>
+            </div>
+          </Modal>
+        </div>
+      )}
     </div>
   );
 };
@@ -233,6 +269,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   const data = state.data.data;
   const loading = state.user.loading;
   const gridData = state.data.gridData;
+  const isLoading = state.data.isLoading;
   return {
     authenticated,
     name,
@@ -240,6 +277,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
     data,
     loading,
     gridData,
+    isLoading,
   };
 };
 const mapDispatchToProps = (
@@ -247,6 +285,7 @@ const mapDispatchToProps = (
   ownProps: OwnProps
 ): DispatchProps => ({
   getUser: bindActionCreators(getUser, dispatch),
+  getLocalStorageData: bindActionCreators(getLocalStorageData, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

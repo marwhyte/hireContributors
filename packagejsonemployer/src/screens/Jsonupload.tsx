@@ -6,6 +6,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { getData, setData } from "../actions/data";
 import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
+import { css } from "@emotion/core";
+import HashLoader from "react-spinners/HashLoader";
 //Redux
 import { connect } from "react-redux";
 import { getUser } from "../actions/user";
@@ -28,6 +30,7 @@ type StateProps = {
   profilePic?: string;
   data?: dataObject[];
   tableData?: graphData[];
+  isLoading: boolean;
 };
 
 interface OwnProps extends RouteComponentProps<any> {}
@@ -59,6 +62,13 @@ const Jsonupload = (props: Props) => {
       }
     }
   }, [props.loading]);
+
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+  `;
+
   const updateJSON = (text: string) => {
     setJsonSource(text);
     setParsedJson(JSON.parse(text));
@@ -115,9 +125,21 @@ const Jsonupload = (props: Props) => {
       />
       <h1>Upload Your Package.json!</h1>
       <UploadFile updateJSON={updateJSON} />
-      <button className="btn-hover color-3" onClick={gatherData}>
-        Submit
-      </button>
+      {props.isLoading ? (
+        <div style={{ paddingBottom: 20 }}>
+          <HashLoader
+            css={override}
+            size={50}
+            color={"#9932cc"}
+            loading={props.isLoading}
+          />
+        </div>
+      ) : (
+        <button className="btn-hover color-3" onClick={gatherData}>
+          Submit
+        </button>
+      )}
+
       <div className="transition">
         <ReactJson
           src={jsonSource !== "" ? JSON.parse(jsonSource) : {}}
@@ -144,6 +166,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
   const loading = state.user.loading;
   const data = state.data.data;
   const tableData = state.data.gridData;
+  const isLoading = state.data.isLoading;
   return {
     authenticated,
     name,
@@ -151,6 +174,7 @@ const mapStateToProps = (state: AppState, ownProps: OwnProps): StateProps => {
     loading,
     data,
     tableData,
+    isLoading,
   };
 };
 const mapDispatchToProps = (

@@ -12,6 +12,7 @@ import {
   getContributorsAccount,
   getContributorsInfo,
   getDependencyInfo,
+  getRepository,
 } from "../functions/getData";
 export const getData = (dependencies: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
@@ -116,12 +117,114 @@ export const getData = (dependencies: string[], token: string) => {
     console.log(formattedData);
     console.log(JSON.stringify(formattedData));
     localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
-    dispatch(postDataSuccess(data, formattedData));
+    if (data && formattedData) {
+      dispatch(postDataSuccess(data, formattedData));
+    } else {
+      dispatch(postDataFailure());
+    }
   };
 };
 export const getLocalStorageData = (parsedInfo: string[], token: string) => {
-  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {};
+  return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
+    dispatch(postDataStart());
+    var id = 0;
+    var data: dataObject[] = [];
+    for (const dependency of parsedInfo) {
+      const dependencyInfo = await getRepository(dependency, token);
+      const packName: string = dependencyInfo.name;
+      const packApiRepo = dependencyInfo.url;
+      const packRepo: string = dependencyInfo.html_url;
+      const packStarGazers: number = dependencyInfo.stargazers_count;
+      const language = dependencyInfo.language;
+      var contributersArray: collaborator[] = [];
+      const contributersInfo = await getContributorsInfo(
+        dependencyInfo.contributors_url,
+        token
+      );
+      const topContributors = [
+        contributersInfo[0],
+        contributersInfo[1],
+        contributersInfo[2],
+        contributersInfo[3],
+        contributersInfo[4],
+        contributersInfo[5],
+      ];
+      for (const singleContributer of topContributors) {
+        const contributerAccount = await getContributorsAccount(
+          singleContributer.url,
+          token
+        );
+        const contributor: collaborator = {
+          id: id,
+          name: contributerAccount.name,
+          company: contributerAccount.company,
+          avatarURL: contributerAccount.avatar_url,
+          followers: contributerAccount.followers,
+          following: contributerAccount.following,
+          bio: contributerAccount.bio,
+          hireable: contributerAccount.hireable,
+          contributions: singleContributer.contributions,
+          type: contributerAccount.type,
+          login: contributerAccount.login,
+          location: contributerAccount.location,
+          githubURL: contributerAccount.html_url,
+        };
+        contributersArray.push(contributor);
+        id++;
+      }
+      const singleDependData: dataObject = {
+        packageName: packName,
+        packageApiRepo: packApiRepo,
+        packageRepo: packRepo,
+        collaborators: contributersArray,
+        starGazers: packStarGazers,
+        language: language,
+      };
+      data.push(singleDependData);
+    }
+    var tableFormattedData: graphData[] = [];
+    for (const singleRepo of data) {
+      var rankCount = 1;
+      for (const singleContributer of singleRepo.collaborators) {
+        if (singleContributer.type !== "User") {
+          rankCount--;
+        }
+        const gridFormatting: graphData = {
+          id: singleContributer.id,
+          name: singleContributer.name,
+          packageName: singleRepo.packageName,
+          company: singleContributer.company,
+          avatarURL: singleContributer.avatarURL,
+          followers: singleContributer.followers,
+          following: singleContributer.following,
+          bio: singleContributer.bio,
+          hireable: singleContributer.hireable,
+          starGazers: singleRepo.starGazers,
+          language: singleRepo.language,
+          contributions: singleContributer.contributions,
+          type: singleContributer.type,
+          login: singleContributer.login,
+          location: singleContributer.location,
+          githubURL: singleContributer.githubURL,
+          packageRank: rankCount,
+        };
+        tableFormattedData.push(gridFormatting);
+        rankCount++;
+      }
+    }
+    const formattedData = tableFormattedData.filter(
+      (element) => element.type === "User" && element.name !== null
+    );
+    console.log(formattedData);
+    console.log(JSON.stringify(formattedData));
+    if (data && formattedData) {
+      dispatch(postDataSuccess(data, formattedData));
+    } else {
+      dispatch(postDataFailure());
+    }
+  };
 };
+
 export const setData = () => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());
