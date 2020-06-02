@@ -8,7 +8,7 @@ import Jsonupload from "./screens/Jsonupload";
 import Login from "./screens/Login";
 import Home from "./screens/Home";
 import EmailTemplate from "./screens/EmailTemplate";
-
+import SingleView from "./screens/SingleView";
 function App() {
   return (
     <Provider store={store}>
@@ -20,6 +20,7 @@ function App() {
             <Route path="/login" component={Login} />
             <Route path="/home" component={Home} />
             <Route path="/email-template" component={EmailTemplate} />
+            <Route path="/find-canidates" component={SingleView} />
           </Switch>
         </Router>
       </div>
