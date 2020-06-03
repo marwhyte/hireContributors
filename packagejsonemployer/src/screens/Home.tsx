@@ -2,7 +2,11 @@ import * as React from "react";
 import queryString from "query-string";
 import "../styles/Home.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBoxOpen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBoxOpen,
+  faHeart,
+  faSearchLocation,
+} from "@fortawesome/free-solid-svg-icons";
 import { faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { faAward } from "@fortawesome/free-solid-svg-icons";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
@@ -12,6 +16,10 @@ import { Modal } from "react-responsive-modal";
 import Navbar from "../components/Navbar";
 import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
+import "react-toggle/style.css";
+import Toggle from "react-toggle";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 //redux
 import { connect } from "react-redux";
 import { getUser } from "../actions/user";
@@ -20,7 +28,7 @@ import { ThunkDispatch } from "redux-thunk";
 import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { dumbyDataGraph } from "../functions/dumbyData";
 import { getLocalStorageData } from "../actions/data";
 
@@ -57,16 +65,34 @@ const Home = (props: Props) => {
     bio: "sample",
     hireable: null,
   });
+  const [whichSelected, setWhichSelected] = React.useState(true);
   const [dumbData, setDumbData] = React.useState(props.gridData);
   React.useEffect(() => {
     console.log("graphdata", props.gridData);
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
+    // localStorage.removeItem("favorites")
+    // localStorage.removeItem("count")
   }, []);
   React.useEffect(() => {
-    if (props.gridData) setDumbData(props.gridData);
-  }, [props.gridData]);
+    if (props.gridData) {
+      if (whichSelected) {
+        const localIds = localStorage.getItem("favorites");
+        if (localIds !== null && localIds !== undefined) {
+          const parsedFavorites = JSON.parse(localIds);
+          const filtered = props.gridData.filter((element) =>
+            parsedFavorites.includes(element.id)
+          );
+          setDumbData(filtered);
+        } else {
+          setDumbData([]);
+        }
+      } else {
+        setDumbData(props.gridData);
+      }
+    }
+  }, [props.gridData, whichSelected]);
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
@@ -78,6 +104,10 @@ const Home = (props: Props) => {
       }
     }
   }, [props.loading]);
+  React.useEffect(() => {
+    if (whichSelected) {
+    }
+  }, [whichSelected, props.gridData]);
   React.useEffect(() => {
     const localStorageInfo = localStorage.getItem("packageRepo");
     if (props.gridData) {
@@ -91,13 +121,73 @@ const Home = (props: Props) => {
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
   }, [token]);
+  React.useEffect(() => {
+    console.log("this", props.gridData);
+  }, [props.gridData]);
   const override = css`
     display: block;
     margin: 0 auto;
     border-color: red;
   `;
+
+  const copyEmail = (canidateName: string, canidatePackage: string) => {
+    var email = localStorage.getItem("emailTemplate");
+    if (email === null || email === undefined) {
+      const defaultString = `Hello ${canidateName},\n I noticed your work at ${canidatePackage} and was impressed, would you be interested in having a conversion about possible careers? If so, reach out!\nSincerely`;
+      toast.warning(
+        "⚠️ Using Default Email Template, it is recommended to create your own Template!",
+        {
+          position: "top-right",
+          autoClose: 7000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+      toast.success("📧Template email with canidate info copied to clipboard", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      navigator.clipboard.writeText(defaultString);
+    } else {
+      const packageReplace = email.replace(/{{PACKAGENAME}}/g, canidatePackage);
+      const nameReplace = packageReplace.replace(/{{NAME}}/g, canidateName);
+      navigator.clipboard.writeText(nameReplace);
+      toast.success(
+        "📧Your Customized Email with canidate info was copied to clipboard",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+    }
+  };
   return (
     <div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ fontSize: 14 }}
+      />
       <Navbar selected={"Home"} token={token} />
       {props.isLoading ? (
         <div className="isLoadingHome">
@@ -111,7 +201,90 @@ const Home = (props: Props) => {
         </div>
       ) : (
         <div className="home">
-          <h1>home page</h1>
+          {dumbData && dumbData.length > 0 ? (
+            <div style={{ width: "55%", marginLeft: "auto" }}>
+              <div className="togetherToggle">
+                <label>
+                  <Toggle
+                    className="myToggle"
+                    defaultChecked={whichSelected}
+                    icons={{
+                      checked: (
+                        <FontAwesomeIcon color={"white"} icon={faHeart} />
+                      ),
+                      unchecked: null,
+                    }}
+                    onChange={() => setWhichSelected((boolean) => !boolean)}
+                  />
+                </label>
+                <p
+                  style={{
+                    margin: 0,
+                    fontWeight: 500,
+                    color: "#333333",
+                    lineHeight: 1.1,
+                    fontSize: 20,
+                    paddingLeft: 10,
+                    paddingBottom: 2,
+                  }}
+                >
+                  {whichSelected ? "My Favorites" : "All"}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <div style={{ width: "55%", marginLeft: "auto" }}>
+                <div className="togetherToggle">
+                  <label>
+                    <Toggle
+                      className="myToggle"
+                      defaultChecked={whichSelected}
+                      icons={{
+                        checked: (
+                          <FontAwesomeIcon color={"white"} icon={faHeart} />
+                        ),
+                        unchecked: null,
+                      }}
+                      onChange={() => setWhichSelected((boolean) => !boolean)}
+                    />
+                  </label>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontWeight: 500,
+                      color: "#333333",
+                      lineHeight: 1.1,
+                      fontSize: 20,
+                      paddingLeft: 10,
+                      paddingBottom: 2,
+                    }}
+                  >
+                    {whichSelected ? "My Favorites" : "All"}
+                  </p>
+                </div>
+              </div>
+              <div className="maximumValue">
+                <p
+                  className="packageInfoMoreSingle"
+                  style={{ fontSize: 25, marginBottom: 40 }}
+                >
+                  <FontAwesomeIcon icon={faSearchLocation} /> You haven't
+                  Favorited anyone yet, find potential canidates using the easy
+                  to use explore feature <br></br> or view all with the Toggle
+                  Above
+                </p>
+                <Link
+                  to={"/find-canidates?access_token=" + token}
+                  className="templateButton click"
+                  style={{ textDecoration: "none", padding: 10 }}
+                >
+                  Explore Canidates
+                </Link>
+              </div>
+            </div>
+          )}
+
           {dumbData ? (
             <div className="wholeGrid">
               {dumbData.map((person) => (
@@ -143,15 +316,25 @@ const Home = (props: Props) => {
                     >
                       More Info
                     </button>
-                    <button className="inbox">
-                      <FontAwesomeIcon icon={faEnvelopeOpenText} />
+                    <button
+                      className="inbox"
+                      onClick={() =>
+                        copyEmail(
+                          person.name !== null
+                            ? person.name
+                            : "SomethingWentWrong",
+                          person.packageName
+                        )
+                      }
+                    >
+                      <FontAwesomeIcon icon={faEnvelopeOpenText} /> Copy Email
                     </button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <p>loading table</p>
+            <div></div>
           )}
           <Modal
             open={open}

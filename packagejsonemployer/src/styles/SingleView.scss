@@ -1,8 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500&display=swap");
 $purple: #9932cc;
-
+.wholeSingleView {
+  width: 100%;
+  min-height: 100vh;
+}
 .singleView {
-  padding-top: 100px;
+  padding-top: 80px;
   border-bottom: 1px solid #e5e5e5;
   border-right: 1px solid #e5e5e5;
   border-left: 1px solid #e5e5e5;
@@ -23,9 +26,9 @@ $purple: #9932cc;
   }
 }
 .moreAboutSingle {
+  padding-left: 50px;
   text-align: left;
-  margin: 0 auto;
-  width: 800px;
+  width: 100%;
   border-bottom: 1px solid #e5e5e5;
   padding-bottom: 20px;
   color: #333333;
@@ -33,6 +36,7 @@ $purple: #9932cc;
   font-weight: 500;
   line-height: 1.1;
 }
+
 .moreMainNameSingle {
   text-align: center;
   margin: 5px auto;
@@ -65,9 +69,14 @@ $purple: #9932cc;
     cursor: pointer;
   }
 }
+.sameLineSingle {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 .moreAllPackageInfoSingle {
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   width: 100%;
   border-bottom: 1px solid #e5e5e5;
@@ -94,6 +103,14 @@ $purple: #9932cc;
   .stargazersMore {
     margin-left: 30px;
   }
+}
+.packageNameMoreBoldSingleIf {
+  margin-right: 10px;
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.1;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
 }
 .packageLinkSingle {
   color: $purple;
@@ -126,4 +143,59 @@ $purple: #9932cc;
 .usersIconSingle {
   color: $purple;
   margin-right: 7px;
+}
+.buttonsSingleView {
+  width: 1000px;
+  margin: 30px auto;
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.maximumValue {
+  padding-top: 200px;
+}
+.templateButtonRed {
+  outline: none;
+  background-color: rgb(255, 38, 0);
+  height: 40px;
+  width: 150px;
+  margin: 10px 30px 30px 0;
+  border: none;
+  border-bottom: 2px solid rgb(212, 32, 0);
+  border-radius: 5px;
+  color: white;
+  font-size: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  &:hover {
+    background-color: rgb(212, 32, 0);
+  }
+}
+.spacebetweenSingle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 100vh;
+}
+.templateButtonRed:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: -200%;
+  right: -25%;
+  width: 150%;
+  height: 500%;
+  background: rgb(212, 32, 0);
+  border-radius: 100%;
+  opacity: 0;
+}
+.templateButtonRed:after {
+  visibility: hidden;
+}
+
+.templateButtonRed:focus:after {
+  visibility: visible;
 }

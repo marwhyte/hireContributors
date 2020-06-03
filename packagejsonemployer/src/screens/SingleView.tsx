@@ -1,6 +1,6 @@
 import * as React from "react";
 import Navbar from "../components/Navbar";
-import { RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps, Link } from "react-router-dom";
 import { dataObject, graphData } from "../types/DataObject";
 import { getUser } from "../actions/user";
 import { getLocalStorageData } from "../actions/data";
@@ -14,7 +14,15 @@ import { dumbyDataGraph } from "../functions/dumbyData";
 import "../styles/SingleView.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
-import { faUsers, faAward } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUsers,
+  faAward,
+  faCopy,
+  faArchive,
+} from "@fortawesome/free-solid-svg-icons";
+import { css } from "@emotion/core";
+import HashLoader from "react-spinners/HashLoader";
+import { NONAME } from "dns";
 
 interface DispatchProps {}
 
@@ -37,7 +45,8 @@ type Props = DispatchProps & StateProps & OwnProps;
 
 const SingleView: React.FC<Props> = (props: Props) => {
   const [token, setToken] = React.useState("");
-  const [dumbData, setDumbData] = React.useState(dumbyDataGraph);
+  const [dumbData, setDumbData] = React.useState(props.gridData);
+  const [reachMax, setReachMax] = React.useState(false);
   const [singleInfo, setSingleInfo] = React.useState<graphData>({
     id: 0,
     name: "sample",
@@ -51,141 +60,239 @@ const SingleView: React.FC<Props> = (props: Props) => {
   });
   const [personCount, setPersonCount] = React.useState(0);
   React.useEffect(() => {
-    setSingleInfo(dumbData[personCount]);
-  }, [personCount]);
-  // React.useEffect(() => {
-  //     var parsed = queryString.parse(window.location.search);
-  //     var accessToken: any = parsed.access_token;
-  //     props.getUser(accessToken);
-  //   }, []);
+    const checkLocal = localStorage.getItem("count");
+    if (checkLocal === null || checkLocal === undefined) {
+      setPersonCount(0);
+    } else {
+      setPersonCount(Number(checkLocal));
+    }
+  }, []);
+  React.useEffect(() => {
+    if (props.gridData) {
+      if (personCount <= props.gridData.length - 1)
+        setSingleInfo(props.gridData[personCount]);
+      else {
+        setReachMax(true);
+      }
+    }
+  }, [personCount, props.gridData]);
+  React.useEffect(() => {
+    var parsed = queryString.parse(window.location.search);
+    var accessToken: any = parsed.access_token;
+    props.getUser(accessToken);
+  }, []);
 
-  //   React.useEffect(() => {
-  //     if (!props.loading) {
-  //       if (!props.authenticated) {
-  //         props.history.push("/login");
-  //       } else {
-  //         var parsed = queryString.parse(window.location.search);
-  //         var accessToken: any = parsed.access_token;
-  //         setToken(accessToken);
-  //       }
-  //     }
-  //   }, [props.loading]);
-  //   React.useEffect(() => {
-  //     const localStorageInfo = localStorage.getItem("packageRepo");
-  //     if (props.gridData) {
-  //       console.log("Data In Redux Store");
-  //     } else if (
-  //       token.length !== 0 &&
-  //       localStorageInfo !== null &&
-  //       localStorageInfo !== undefined
-  //     ) {
-  //       console.log("Getting Data!");
-  //       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
-  //     }
-  //   }, [token]);
-
+  React.useEffect(() => {
+    if (!props.loading) {
+      if (!props.authenticated) {
+        props.history.push("/login");
+      } else {
+        var parsed = queryString.parse(window.location.search);
+        var accessToken: any = parsed.access_token;
+        setToken(accessToken);
+      }
+    }
+  }, [props.loading]);
+  React.useEffect(() => {
+    const localStorageInfo = localStorage.getItem("packageRepo");
+    if (props.gridData) {
+      console.log("Data In Redux Store");
+    } else if (
+      token.length !== 0 &&
+      localStorageInfo !== null &&
+      localStorageInfo !== undefined
+    ) {
+      console.log("Getting Data!");
+      props.getLocalStorageData(JSON.parse(localStorageInfo), token);
+    }
+  }, [token]);
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+  `;
+  const deleteUser = (id: number) => {
+    var number = Number(localStorage.getItem("count"));
+    const newVal = number === null || number === undefined ? 1 : number + 1;
+    localStorage.setItem("count", newVal.toString());
+    setPersonCount(personCount + 1);
+  };
+  const favoriteUser = (id: number) => {
+    var newFav = localStorage.getItem("favorites");
+    const array =
+      newFav === null || newFav === undefined ? [] : JSON.parse(newFav);
+    const final = [...array, id];
+    localStorage.setItem("count", final.length.toString());
+    localStorage.setItem("favorites", JSON.stringify(final));
+    setPersonCount(personCount + 1);
+  };
   return (
-    <div>
+    <div className="wholeSingleView">
       <Navbar selected={"SingleView"} token={token} />
-      <div className="singleView">
-        <p className="moreAboutSingle">More about {singleInfo.name}</p>
-
-        {singleInfo.avatarURL !== null && (
-          <img
-            src={singleInfo.avatarURL}
-            alt="Users Github Profile"
-            className="profilePictureMoreSingle"
+      {props.isLoading ? (
+        <div className="isLoadingHome">
+          {" "}
+          <HashLoader
+            css={override}
+            size={50}
+            color={"#9932cc"}
+            loading={props.isLoading}
           />
-        )}
-        <h1 className="moreMainNameSingle">
-          {singleInfo.name}
-          <span className="location">{singleInfo.location}</span>
-        </h1>
-        <div className="moreAllPackageInfoSingle">
-          <p className="packageNameMoreBoldSingle">
-            Package Info:{" "}
-            <span
-              className="packageLinkSingle"
-              onClick={() => window.open(singleInfo.githubURL, "_blank")}
-            >
-              {singleInfo.packageName}
-            </span>
-            <span className="stargazersMoreSingle">
-              {singleInfo.starGazers}
-            </span>
-            {"  "} <span className="packageInfoMoreSingle"> stargazers</span>
-            {"  "} <span className="stargazersMoreSingle"> Language: </span>
-            <span className="packageInfoMoreSingle">{singleInfo.language}</span>
-          </p>
-
-          <FontAwesomeIcon
-            icon={faAward}
-            size="2x"
-            className="awardIconSingle"
-            style={
-              singleInfo.packageRank === 1
-                ? { color: "#FFDF00" }
-                : singleInfo.packageRank === 2
-                ? { color: "	#C0C0C0" }
-                : { color: "#cd7f32" }
-            }
-          />
-          <p className="packageInfoMoreSingle">
-            contributor #{singleInfo.packageRank}
-          </p>
         </div>
-        <div className="ptagsSingle">
+      ) : reachMax ? (
+        <div className="maximumValue">
           <p
-            className={
-              singleInfo.bio !== null ? "infoPTagSingle" : "displayNone"
-            }
+            className="packageInfoMoreSingle"
+            style={{ fontSize: 25, marginBottom: 40 }}
           >
-            <span className="boldMore">Bio:</span>
-            {singleInfo.bio}
+            <FontAwesomeIcon icon={faArchive} /> You've Gone Through All The
+            Possible Connections with this Package!
           </p>
-          <p
-            className={
-              singleInfo.company !== null ? "infoPTagSingle" : "displayNone"
-            }
+          <Link
+            to={"/home?access_token=" + token}
+            className="templateButton click"
+            style={{ textDecoration: "none", padding: 10 }}
           >
-            Company: {singleInfo.company}
-          </p>
-          {singleInfo.hireable ? (
-            <p className="infoPTagSingle">Hireable: Yes</p>
-          ) : (
-            <div className="displayNoneSingle"></div>
-          )}
-          <div className="followersSingle">
-            <p className="followerMarginSingle">
-              <span className="boldMoreSingle">
-                <FontAwesomeIcon icon={faGithub} className="usersIcon" />
-                Github Profile:
-              </span>
-              <span
-                className="loginInfoMoreSingle"
-                onClick={() => window.open(singleInfo.githubURL, "_blank")}
-              >
-                {singleInfo.login}
-              </span>
-            </p>
-            <p className="followerMarginSingle">
-              <span className="boldMoreSingle">
-                <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                Followers:
-              </span>
-              {singleInfo.followers}
-            </p>
+            Favorite Canidates
+          </Link>
+        </div>
+      ) : (
+        <div className="spacebetweenSingle">
+          <div className="singleView">
+            <p className="moreAboutSingle">More about {singleInfo.name}</p>
 
-            <p>
-              <span className="boldMore">
-                <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                Following:
-              </span>
-              {singleInfo.following}
-            </p>
+            {singleInfo.avatarURL !== null && (
+              <img
+                src={singleInfo.avatarURL}
+                alt="Users Github Profile"
+                className="profilePictureMoreSingle"
+              />
+            )}
+            <h1 className="moreMainNameSingle">
+              {singleInfo.name}
+              <span className="locationSingle">{singleInfo.location}</span>
+            </h1>
+            <div className="moreAllPackageInfoSingle">
+              <p className="packageNameMoreBoldSingle">
+                Package Info:{" "}
+                <span
+                  className="packageLinkSingle"
+                  onClick={() => window.open(singleInfo.githubURL, "_blank")}
+                >
+                  {singleInfo.packageName}
+                </span>
+              </p>
+              <p className="packageNameMoreBoldSingle">
+                <span className="stargazersMoreSingle">
+                  {singleInfo.starGazers}
+                </span>
+                <span className="packageInfoMoreSingle"> stargazers</span>
+              </p>
+              <div className="sameLineSingle">
+                <p>
+                  <span className="packageNameMoreBoldSingleIf">
+                    {" "}
+                    Language:{" "}
+                  </span>
+                </p>
+                <p>
+                  <span className="packageInfoMoreSingle">
+                    {singleInfo.language}
+                  </span>
+                </p>
+              </div>
+              <div className="sameLineSingle">
+                <FontAwesomeIcon
+                  icon={faAward}
+                  size="2x"
+                  className="awardIconSingle"
+                  style={
+                    singleInfo.packageRank === 1
+                      ? { color: "#FFDF00" }
+                      : singleInfo.packageRank === 2
+                      ? { color: "	#C0C0C0" }
+                      : { color: "#cd7f32" }
+                  }
+                />
+                <p className="packageInfoMoreSingle">
+                  contributor #{singleInfo.packageRank}
+                </p>
+              </div>
+            </div>
+            <div className="ptagsSingle">
+              <p
+                className={
+                  singleInfo.bio !== null ? "infoPTagSingle" : "displayNone"
+                }
+              >
+                <span className="boldMore">Bio:</span>
+                {singleInfo.bio}
+              </p>
+              <p
+                className={
+                  singleInfo.company !== null ? "infoPTagSingle" : "displayNone"
+                }
+              >
+                Company: {singleInfo.company}
+              </p>
+              {singleInfo.hireable ? (
+                <p className="infoPTagSingle">Hireable: Yes</p>
+              ) : (
+                <div className="displayNoneSingle"></div>
+              )}
+              <div className="followersSingle">
+                <p className="followerMarginSingle">
+                  <span className="boldMoreSingle">
+                    <FontAwesomeIcon icon={faGithub} className="usersIcon" />
+                    Github Profile:
+                  </span>
+                  <span
+                    className="loginInfoMoreSingle"
+                    onClick={() => window.open(singleInfo.githubURL, "_blank")}
+                  >
+                    {singleInfo.login}
+                  </span>
+                </p>
+                <p className="followerMarginSingle">
+                  <span className="boldMoreSingle">
+                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                    Followers:
+                  </span>
+                  {singleInfo.followers}
+                </p>
+
+                <p>
+                  <span className="boldMore">
+                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
+                    Following:
+                  </span>
+                  {singleInfo.following}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="buttonsSingleView">
+            <button
+              className="templateButtonRed click"
+              onClick={() => {
+                deleteUser(singleInfo.id);
+              }}
+            >
+              <FontAwesomeIcon icon={faCopy} /> Remove
+            </button>
+            <button
+              onClick={() => {
+                favoriteUser(singleInfo.id);
+              }}
+              className="templateButton click"
+            >
+              {" "}
+              <FontAwesomeIcon icon={faCopy} /> Favorite
+            </button>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
