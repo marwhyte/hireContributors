@@ -10,7 +10,7 @@ import {
 import { faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { faAward } from "@fortawesome/free-solid-svg-icons";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import "react-responsive-modal/styles.css";
 import { Modal } from "react-responsive-modal";
 import Navbar from "../components/Navbar";
@@ -64,6 +64,7 @@ const Home = (props: Props) => {
     following: 8,
     bio: "sample",
     hireable: null,
+    packageRepo: "sample",
   });
   const [whichSelected, setWhichSelected] = React.useState(true);
   const [dumbData, setDumbData] = React.useState(props.gridData);
@@ -172,6 +173,16 @@ const Home = (props: Props) => {
           progress: undefined,
         }
       );
+    }
+  };
+  const goToLinkedIn = (name: string) => {
+    const nameArray = name.split(" ");
+    if (nameArray.length === 1) {
+      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}`;
+      window.open(link, "_blank");
+    } else {
+      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}%20${nameArray[1]}`;
+      window.open(link, "_blank");
     }
   };
   return (
@@ -296,7 +307,11 @@ const Home = (props: Props) => {
                       className="profilePicture"
                     />
                     <h1>{person.name}</h1>
-                    <p>{person.bio}</p>
+                    <p style={{ maxHeight: 37, overflow: "hidden" }}>
+                      {person.bio && person.bio.length >= 77
+                        ? person.bio.substring(0, 70) + " ..."
+                        : person.bio}
+                    </p>
                     <p>
                       <FontAwesomeIcon
                         icon={faBoxOpen}
@@ -304,6 +319,23 @@ const Home = (props: Props) => {
                       />
                       {person.packageName}
                     </p>
+                    <div className="RankingHome">
+                      <FontAwesomeIcon
+                        icon={faAward}
+                        size="2x"
+                        className="awardIcon"
+                        style={
+                          person.packageRank === 1
+                            ? { color: "#FFDF00" }
+                            : person.packageRank === 2
+                            ? { color: "	#C0C0C0" }
+                            : { color: "#cd7f32" }
+                        }
+                      />
+                      <p className="packageInfoMore">
+                        contributor #{person.packageRank}
+                      </p>
+                    </div>
                     <p>{person.company}</p>
                   </div>
                   <div className="personButtons">
@@ -363,7 +395,7 @@ const Home = (props: Props) => {
                 Package Info:{" "}
                 <span
                   className="packageLink"
-                  onClick={() => window.open(modalInfo.githubURL, "_blank")}
+                  onClick={() => window.open(modalInfo.packageRepo, "_blank")}
                 >
                   {modalInfo.packageName}
                 </span>
@@ -437,6 +469,22 @@ const Home = (props: Props) => {
                   {modalInfo.following}
                 </p>
               </div>
+              <p
+                onClick={() =>
+                  modalInfo.name !== null && goToLinkedIn(modalInfo.name)
+                }
+                className="loginInfoMoreSingle"
+                style={{
+                  fontSize: 16,
+                  fontWeight: 500,
+                  lineHeight: 1.1,
+                  marginTop: 20,
+                  marginBottom: 30,
+                  textAlign: "center",
+                }}
+              >
+                <FontAwesomeIcon icon={faLinkedin} /> LinkedIn Search
+              </p>
             </div>
           </Modal>
         </div>

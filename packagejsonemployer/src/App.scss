@@ -78,6 +78,30 @@ html {
   align-items: center;
   background-color: white;
 }
+.backtoMarketing {
+  text-decoration: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  position: fixed;
+  padding: 7px;
+  border-radius: 7px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  cursor: pointer;
+  top: 10px;
+  left: 10px;
+  &:hover {
+    background-color: rgb(236, 236, 236) !important;
+  }
+  p {
+    padding-left: 14px;
+    font-size: 1rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #333333;
+  }
+}
 .copyJSON {
   resize: none;
   background-color: $secondDarkest;
@@ -86,11 +110,6 @@ html {
 
 .fileUploader {
   width: 900px;
-  border-radius: 7px;
-  border-top: 1px solid grey;
-}
-.fileUploader:hover {
-  border-color: rgb(255, 2, 44);
 }
 
 /* Keyframes */

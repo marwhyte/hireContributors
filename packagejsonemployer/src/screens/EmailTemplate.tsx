@@ -95,15 +95,15 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
           <span style={{ color: "#999" }}>Instructions:</span> {content}
         </p>
         <p className="emailCreatorTo">
-          <span style={{ color: "#999" }}>Tips:</span> <br></br>-The name and
-          package name allows you to fully customize the email to your canadate,
-          any line break formatting will be saved! <br></br>-Once finished save
-          the template using the{" "}
+          <span style={{ color: "#999" }}>Tips:</span> <br></br>-The canidate
+          name and package name buttons allows you to fully customize the email
+          to your canadate, any line break formatting will be saved! <br></br>
+          -Once finished save the template using the{" "}
           <span style={{ color: "#08960f", fontWeight: 700, fontSize: 17 }}>
             Save Template
           </span>{" "}
-          button! <br></br>-Paste the name and package name to your email
-          template using the buttons below!
+          button! <br></br>-Your template will save even if you sign out, your
+          template is not saved anywhere other than your local storage
         </p>
         <div className="emailCreatorTemplateButtons">
           <button

@@ -16,6 +16,8 @@ import { ThunkDispatch } from "redux-thunk";
 import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface DispatchProps {
   getUser: typeof getUser;
@@ -123,7 +125,22 @@ const Jsonupload = (props: Props) => {
         draggable
         pauseOnHover
       />
-      <h1>Upload Your Package.json!</h1>
+      <a href="/" className="backtoMarketing">
+        <FontAwesomeIcon
+          icon={faChevronCircleLeft}
+          color={"#007bff"}
+          size="3x"
+        />
+        <p style={{ color: "#007bff" }}>Back To Marketing Page</p>
+      </a>
+      <div className="headerUploadDocument">
+        <h1>Upload Your Package.json To Find Canidates</h1>
+        <p className="smallTextUpload">
+          All of your information is on the client side, none of your data is
+          saved.
+        </p>
+      </div>
+
       <UploadFile updateJSON={updateJSON} />
       {props.isLoading ? (
         <div style={{ paddingBottom: 20 }}>
@@ -135,7 +152,7 @@ const Jsonupload = (props: Props) => {
           />
         </div>
       ) : (
-        <button className="btn-hover color-3" onClick={gatherData}>
+        <button className="templateButton click" onClick={gatherData}>
           Submit
         </button>
       )}

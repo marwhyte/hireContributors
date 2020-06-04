@@ -91,6 +91,7 @@ export const getData = (dependencies: string[], token: string) => {
         const gridFormatting: graphData = {
           id: singleContributer.id,
           name: singleContributer.name,
+          packageRepo: singleRepo.packageRepo,
           packageName: singleRepo.packageName,
           company: singleContributer.company,
           avatarURL: singleContributer.avatarURL,
@@ -192,6 +193,7 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
         const gridFormatting: graphData = {
           id: singleContributer.id,
           name: singleContributer.name,
+          packageRepo: singleRepo.packageRepo,
           packageName: singleRepo.packageName,
           company: singleContributer.company,
           avatarURL: singleContributer.avatarURL,

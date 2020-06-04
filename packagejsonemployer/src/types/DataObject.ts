@@ -26,6 +26,7 @@ export interface graphData {
   id: number;
   name: string | null;
   packageName: string;
+  packageRepo: string;
   starGazers?: number | null;
   language?: string | null;
   company?: string | null;

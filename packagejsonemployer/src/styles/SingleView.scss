@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500&display=swap");
-$purple: #9932cc;
+$purple: #007bff;
 .wholeSingleView {
   width: 100%;
   min-height: 100vh;
@@ -65,7 +65,7 @@ $purple: #9932cc;
 .loginInfoMoreSingle {
   color: $purple;
   &:hover {
-    color: #550080;
+    color: #9932cc;
     cursor: pointer;
   }
 }
@@ -115,7 +115,7 @@ $purple: #9932cc;
 .packageLinkSingle {
   color: $purple;
   &:hover {
-    color: #550080;
+    color: #9932cc;
     cursor: pointer;
   }
 }

@@ -13,7 +13,7 @@ import queryString from "query-string";
 import { dumbyDataGraph } from "../functions/dumbyData";
 import "../styles/SingleView.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
   faUsers,
   faAward,
@@ -57,6 +57,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
     following: 8,
     bio: "sample",
     hireable: null,
+    packageRepo: "sample",
   });
   const [personCount, setPersonCount] = React.useState(0);
   React.useEffect(() => {
@@ -126,6 +127,16 @@ const SingleView: React.FC<Props> = (props: Props) => {
     localStorage.setItem("favorites", JSON.stringify(final));
     setPersonCount(personCount + 1);
   };
+  const goToLinkedIn = (name: string) => {
+    const nameArray = name.split(" ");
+    if (nameArray.length === 1) {
+      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}`;
+      window.open(link, "_blank");
+    } else {
+      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}%20${nameArray[1]}`;
+      window.open(link, "_blank");
+    }
+  };
   return (
     <div className="wholeSingleView">
       <Navbar selected={"SingleView"} token={token} />
@@ -135,7 +146,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
           <HashLoader
             css={override}
             size={50}
-            color={"#9932cc"}
+            color={"#007bff"}
             loading={props.isLoading}
           />
         </div>
@@ -146,7 +157,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
             style={{ fontSize: 25, marginBottom: 40 }}
           >
             <FontAwesomeIcon icon={faArchive} /> You've Gone Through All The
-            Possible Connections with this Package!
+            Possible Connections with this Package.JSON!
           </p>
           <Link
             to={"/home?access_token=" + token}
@@ -177,7 +188,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
                 Package Info:{" "}
                 <span
                   className="packageLinkSingle"
-                  onClick={() => window.open(singleInfo.githubURL, "_blank")}
+                  onClick={() => window.open(singleInfo.packageRepo, "_blank")}
                 >
                   {singleInfo.packageName}
                 </span>
@@ -269,6 +280,21 @@ const SingleView: React.FC<Props> = (props: Props) => {
                   {singleInfo.following}
                 </p>
               </div>
+              <p
+                onClick={() =>
+                  singleInfo.name !== null && goToLinkedIn(singleInfo.name)
+                }
+                className="loginInfoMoreSingle"
+                style={{
+                  fontSize: 16,
+                  fontWeight: 500,
+                  lineHeight: 1.1,
+                  marginTop: 40,
+                  marginBottom: 70,
+                }}
+              >
+                <FontAwesomeIcon icon={faLinkedin} /> LinkedIn Search
+              </p>
             </div>
           </div>
 
