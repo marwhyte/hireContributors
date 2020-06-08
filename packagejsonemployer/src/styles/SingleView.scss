@@ -119,6 +119,19 @@ $purple: #007bff;
     cursor: pointer;
   }
 }
+.inboxSingle {
+  margin-bottom: 70px;
+  margin-top: 30px;
+  background-color: #fff;
+  border: 1px solid $purple;
+  color: $purple;
+  padding: 7px;
+  cursor: pointer;
+  &:hover {
+    color: #fff;
+    background-color: $purple;
+  }
+}
 .displayNoneSingle {
   display: none;
 }

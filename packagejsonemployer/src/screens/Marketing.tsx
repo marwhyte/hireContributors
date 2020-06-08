@@ -1,11 +1,30 @@
 import * as React from "react";
+import { css } from "@emotion/core";
+import HashLoader from "react-spinners/HashLoader";
+import "../styles/Login.scss";
+import { RouteComponentProps, Redirect } from "react-router-dom";
 
-interface Props {}
+interface Props extends RouteComponentProps<any> {}
 
 const Marketing: React.FC<Props> = (props: Props) => {
+  const [loading, setLoading] = React.useState(true);
+  React.useEffect(() => {
+    window.location.href = "https://jsonbackend.herokuapp.com/auth/login";
+  });
+  const override = css`
+    display: block;
+    margin: 0 auto;
+    border-color: blue;
+  `;
+
   return (
     <div className="marketing">
-      <p>hi</p>
+      <HashLoader
+        css={override}
+        size={70}
+        color={"#8252fa"}
+        loading={loading}
+      />
     </div>
   );
 };

@@ -19,10 +19,16 @@ import {
   faAward,
   faCopy,
   faArchive,
+  faEnvelopeOpenText,
+  faTimes,
+  faHeart,
 } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
 import { NONAME } from "dns";
+import Toggle from "react-toggle";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface DispatchProps {}
 
@@ -137,8 +143,64 @@ const SingleView: React.FC<Props> = (props: Props) => {
       window.open(link, "_blank");
     }
   };
+  const copyEmail = (canidateName: string, canidatePackage: string) => {
+    var email = localStorage.getItem("emailTemplate");
+    if (email === null || email === undefined) {
+      const defaultString = `Hello ${canidateName},\n I noticed your work at ${canidatePackage} and was impressed, would you be interested in having a conversion about possible careers? If so, reach out!\nSincerely`;
+      toast.warning(
+        "⚠️ Using Default Email Template, it is recommended to create your own Template!",
+        {
+          position: "top-right",
+          autoClose: 7000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+      toast.success("📧Template email with canidate info copied to clipboard", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+      navigator.clipboard.writeText(defaultString);
+    } else {
+      const packageReplace = email.replace(/{{PACKAGENAME}}/g, canidatePackage);
+      const nameReplace = packageReplace.replace(/{{NAME}}/g, canidateName);
+      navigator.clipboard.writeText(nameReplace);
+      toast.success(
+        "📧Your Customized Email with canidate info was copied to clipboard",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        }
+      );
+    }
+  };
   return (
     <div className="wholeSingleView">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        style={{ fontSize: 14 }}
+      />
       <Navbar selected={"SingleView"} token={token} />
       {props.isLoading ? (
         <div className="isLoadingHome">
@@ -290,11 +352,23 @@ const SingleView: React.FC<Props> = (props: Props) => {
                   fontWeight: 500,
                   lineHeight: 1.1,
                   marginTop: 40,
-                  marginBottom: 70,
                 }}
               >
                 <FontAwesomeIcon icon={faLinkedin} /> LinkedIn Search
               </p>
+              <button
+                className="inboxSingle"
+                onClick={() =>
+                  copyEmail(
+                    singleInfo.name !== null
+                      ? singleInfo.name
+                      : "SomethingWentWrong",
+                    singleInfo.packageName
+                  )
+                }
+              >
+                <FontAwesomeIcon icon={faEnvelopeOpenText} /> Copy Email
+              </button>
             </div>
           </div>
 
@@ -305,7 +379,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
                 deleteUser(singleInfo.id);
               }}
             >
-              <FontAwesomeIcon icon={faCopy} /> Remove
+              <FontAwesomeIcon icon={faTimes} /> Remove
             </button>
             <button
               onClick={() => {
@@ -314,7 +388,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
               className="templateButton click"
             >
               {" "}
-              <FontAwesomeIcon icon={faCopy} /> Favorite
+              <FontAwesomeIcon icon={faHeart} /> Favorite
             </button>
           </div>
         </div>

@@ -113,65 +113,92 @@ const Jsonupload = (props: Props) => {
     }
   };
   return (
-    <div className="jsonupload">
-      <ToastContainer
-        position="top-center"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-      <a href="/" className="backtoMarketing">
-        <FontAwesomeIcon
-          icon={faChevronCircleLeft}
-          color={"#007bff"}
-          size="3x"
-        />
-        <p style={{ color: "#007bff" }}>Back To Marketing Page</p>
-      </a>
-      <div className="headerUploadDocument">
-        <h1>Upload Your Package.json To Find Canidates</h1>
-        <p className="smallTextUpload">
-          All of your information is on the client side, none of your data is
-          saved.
-        </p>
-      </div>
-
-      <UploadFile updateJSON={updateJSON} />
-      {props.isLoading ? (
-        <div style={{ paddingBottom: 20 }}>
-          <HashLoader
-            css={override}
-            size={50}
-            color={"#9932cc"}
-            loading={props.isLoading}
+    <div>
+      {!props.isLoading ? (
+        <div className="jsonupload">
+          <ToastContainer
+            position="top-center"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
           />
+          <a
+            href="http://127.0.0.1:5500/index.html"
+            className="backtoMarketing"
+          >
+            <FontAwesomeIcon
+              icon={faChevronCircleLeft}
+              color={"#007bff"}
+              size="3x"
+            />
+            <p style={{ color: "#007bff" }}>Back To Marketing Page</p>
+          </a>
+          <div className="headerUploadDocument">
+            <h1>Upload Your Package.json To Find Canidates</h1>
+            <p className="smallTextUpload">
+              All of your information is on the client side, none of your data
+              is saved.
+            </p>
+          </div>
+          <UploadFile updateJSON={updateJSON} />
+          <button className="templateButton click" onClick={gatherData}>
+            Submit
+          </button>
+          <div className="transition">
+            <ReactJson
+              src={jsonSource !== "" ? JSON.parse(jsonSource) : {}}
+              iconStyle="triangle"
+              theme="railscasts"
+              enableClipboard={false}
+              style={
+                jsonSource === ""
+                  ? { display: "none" }
+                  : {
+                      width: 1000,
+                      textAlign: "left",
+                      padding: 30,
+                      fontSize: 12,
+                    }
+              }
+              collapsed={1}
+              displayDataTypes={false}
+            />
+          </div>
         </div>
       ) : (
-        <button className="templateButton click" onClick={gatherData}>
-          Submit
-        </button>
+        <div className="marketing">
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <HashLoader
+              css={override}
+              size={70}
+              color={"#8252fa"}
+              loading={true}
+            />
+            <p
+              style={{
+                color: "#8252fa",
+                fontSize: 30,
+                paddingTop: 20,
+                fontWeight: 700,
+              }}
+            >
+              Gathering Your Data
+            </p>
+          </div>
+        </div>
       )}
-
-      <div className="transition">
-        <ReactJson
-          src={jsonSource !== "" ? JSON.parse(jsonSource) : {}}
-          iconStyle="triangle"
-          theme="railscasts"
-          enableClipboard={false}
-          style={
-            jsonSource === ""
-              ? { display: "none" }
-              : { width: 1000, textAlign: "left", padding: 30, fontSize: 12 }
-          }
-          collapsed={1}
-          displayDataTypes={false}
-        />
-      </div>
     </div>
   );
 };

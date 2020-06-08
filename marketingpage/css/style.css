@@ -108,6 +108,11 @@ button:focus {
 
 /* Main Title Area css
 ============================================================================================ */
+.nopadding {
+  padding: 0 !important;
+  padding-left: 10px !important;
+  font-size: 20px;
+}
 .backgroundGlow {
   box-shadow: 0 0 16px #8252fa;
 }
@@ -202,6 +207,7 @@ button:focus {
 
 /* End Gradient Area css
 ============================================================================================ */
+
 .primary_btn {
   display: inline-block;
   color: #22195e;
