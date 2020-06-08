@@ -194,7 +194,7 @@ const Jsonupload = (props: Props) => {
                 fontWeight: 700,
               }}
             >
-              Gathering Your Data
+              Finding Contributors
             </p>
           </div>
         </div>
