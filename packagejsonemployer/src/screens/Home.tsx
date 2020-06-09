@@ -206,7 +206,7 @@ const Home = (props: Props) => {
           <HashLoader
             css={override}
             size={50}
-            color={"#9932cc"}
+            color={"#8252fa"}
             loading={props.isLoading}
           />
         </div>
