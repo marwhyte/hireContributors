@@ -42,7 +42,7 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
-        props.history.push("/login");
+        window.location.href = "https://hirecontributors.club/";
       } else {
         var parsed = queryString.parse(window.location.search);
         var accessToken: any = parsed.access_token;

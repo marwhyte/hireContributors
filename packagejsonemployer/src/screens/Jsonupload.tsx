@@ -56,7 +56,7 @@ const Jsonupload = (props: Props) => {
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
-        props.history.push("/login");
+        window.location.href = "https://hirecontributors.club/";
       } else {
         var parsed = queryString.parse(window.location.search);
         var accessToken: any = parsed.access_token;
@@ -127,10 +127,7 @@ const Jsonupload = (props: Props) => {
             draggable
             pauseOnHover
           />
-          <a
-            href="http://127.0.0.1:5500/index.html"
-            className="backtoMarketing"
-          >
+          <a href="https://hirecontributors.club/" className="backtoMarketing">
             <FontAwesomeIcon
               icon={faChevronCircleLeft}
               color={"#007bff"}

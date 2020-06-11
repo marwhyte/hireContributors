@@ -22,7 +22,7 @@ export const getData = (dependencies: string[], token: string) => {
     var packageRepos: string[] = [];
     var data: dataObject[] = [];
     for (const dependency of dependencies) {
-      if (count <= 2) {
+      if (count <= 14) {
         const dependancyInfo = await getDependencyInfo(dependency, token);
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
@@ -32,50 +32,68 @@ export const getData = (dependencies: string[], token: string) => {
         const packStarGazers: number = githubPackage.stargazers_count;
         const language = githubPackage.language;
         var contributersArray: collaborator[] = [];
-        const contributersInfo = await getContributorsInfo(
-          githubPackage.contributors_url,
-          token
-        );
-        const topContributors = [
-          contributersInfo[0],
-          contributersInfo[1],
-          contributersInfo[2],
-          contributersInfo[3],
-          contributersInfo[4],
-          contributersInfo[5],
-        ];
-        for (const singleContributer of topContributors) {
-          const contributerAccount = await getContributorsAccount(
-            singleContributer.url,
+        if (
+          githubPackage &&
+          githubPackage.contributors_url &&
+          githubPackage.contributors_url !== null
+        ) {
+          const contributersInfo = await getContributorsInfo(
+            githubPackage.contributors_url,
             token
           );
-          const contributor: collaborator = {
-            id: id,
-            name: contributerAccount.name,
-            company: contributerAccount.company,
-            avatarURL: contributerAccount.avatar_url,
-            followers: contributerAccount.followers,
-            following: contributerAccount.following,
-            bio: contributerAccount.bio,
-            hireable: contributerAccount.hireable,
-            contributions: singleContributer.contributions,
-            type: contributerAccount.type,
-            login: contributerAccount.login,
-            location: contributerAccount.location,
-            githubURL: contributerAccount.html_url,
+          if (contributersInfo === false) {
+            continue;
+          }
+          const topContributors = [
+            contributersInfo[0],
+            contributersInfo[1],
+            contributersInfo[2],
+            contributersInfo[3],
+            contributersInfo[4],
+          ];
+          for (const singleContributer of topContributors) {
+            if (
+              singleContributer &&
+              singleContributer.url &&
+              singleContributer.url !== null
+            ) {
+              const contributerAccount = await getContributorsAccount(
+                singleContributer.url,
+                token
+              );
+              if (contributerAccount === false) {
+                continue;
+              }
+              const contributor: collaborator = {
+                id: id,
+                name: contributerAccount.name,
+                company: contributerAccount.company,
+                avatarURL: contributerAccount.avatar_url,
+                followers: contributerAccount.followers,
+                following: contributerAccount.following,
+                bio: contributerAccount.bio,
+                hireable: contributerAccount.hireable,
+                contributions: singleContributer.contributions,
+                type: contributerAccount.type,
+                login: contributerAccount.login,
+                location: contributerAccount.location,
+                githubURL: contributerAccount.html_url,
+              };
+              contributersArray.push(contributor);
+              id++;
+            }
+          }
+          const singleDependData: dataObject = {
+            packageName: packName,
+            packageApiRepo: packApiRepo,
+            packageRepo: packRepo,
+            collaborators: contributersArray,
+            starGazers: packStarGazers,
+            language: language,
           };
-          contributersArray.push(contributor);
-          id++;
+          data.push(singleDependData);
+          console.log("error in data", data);
         }
-        const singleDependData: dataObject = {
-          packageName: packName,
-          packageApiRepo: packApiRepo,
-          packageRepo: packRepo,
-          collaborators: contributersArray,
-          starGazers: packStarGazers,
-          language: language,
-        };
-        data.push(singleDependData);
       } else {
         break;
       }
@@ -109,14 +127,14 @@ export const getData = (dependencies: string[], token: string) => {
           packageRank: rankCount,
         };
         tableFormattedData.push(gridFormatting);
+        console.log("error in nested forloop", tableFormattedData);
         rankCount++;
       }
     }
     const formattedData = tableFormattedData.filter(
       (element) => element.type === "User" && element.name !== null
     );
-    console.log(formattedData);
-    console.log(JSON.stringify(formattedData));
+
     localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
     if (data && formattedData) {
       dispatch(postDataSuccess(data, formattedData));
@@ -132,56 +150,79 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
     var data: dataObject[] = [];
     for (const dependency of parsedInfo) {
       const dependencyInfo = await getRepository(dependency, token);
+      if (dependencyInfo === false) {
+        continue;
+      }
       const packName: string = dependencyInfo.name;
       const packApiRepo = dependencyInfo.url;
       const packRepo: string = dependencyInfo.html_url;
       const packStarGazers: number = dependencyInfo.stargazers_count;
       const language = dependencyInfo.language;
       var contributersArray: collaborator[] = [];
-      const contributersInfo = await getContributorsInfo(
-        dependencyInfo.contributors_url,
-        token
-      );
-      const topContributors = [
-        contributersInfo[0],
-        contributersInfo[1],
-        contributersInfo[2],
-        contributersInfo[3],
-        contributersInfo[4],
-        contributersInfo[5],
-      ];
-      for (const singleContributer of topContributors) {
-        const contributerAccount = await getContributorsAccount(
-          singleContributer.url,
+      if (
+        dependencyInfo &&
+        dependencyInfo.contributors_url !== undefined &&
+        dependencyInfo.contributors_url !== null
+      ) {
+        const contributersInfo = await getContributorsInfo(
+          dependencyInfo.contributors_url,
           token
         );
-        const contributor: collaborator = {
-          id: id,
-          name: contributerAccount.name,
-          company: contributerAccount.company,
-          avatarURL: contributerAccount.avatar_url,
-          followers: contributerAccount.followers,
-          following: contributerAccount.following,
-          bio: contributerAccount.bio,
-          hireable: contributerAccount.hireable,
-          contributions: singleContributer.contributions,
-          type: contributerAccount.type,
-          login: contributerAccount.login,
-          location: contributerAccount.location,
-          githubURL: contributerAccount.html_url,
+        if (contributersInfo === false) {
+          continue;
+        }
+        const topContributors = [
+          contributersInfo[0],
+          contributersInfo[1],
+          contributersInfo[2],
+          contributersInfo[3],
+          contributersInfo[4],
+          contributersInfo[5],
+        ];
+        for (const singleContributer of topContributors) {
+          if (
+            singleContributer &&
+            singleContributer.url !== null &&
+            singleContributer.url
+          ) {
+            const contributerAccount = await getContributorsAccount(
+              singleContributer.url,
+              token
+            );
+            if (contributerAccount === false) {
+              continue;
+            }
+            const contributor: collaborator = {
+              id: id,
+              name: contributerAccount.name,
+              company: contributerAccount.company,
+              avatarURL: contributerAccount.avatar_url,
+              followers: contributerAccount.followers,
+              following: contributerAccount.following,
+              bio: contributerAccount.bio,
+              hireable: contributerAccount.hireable,
+              contributions: singleContributer.contributions,
+              type: contributerAccount.type,
+              login: contributerAccount.login,
+              location: contributerAccount.location,
+              githubURL: contributerAccount.html_url,
+            };
+            contributersArray.push(contributor);
+            id++;
+          }
+        }
+        const singleDependData: dataObject = {
+          packageName: packName,
+          packageApiRepo: packApiRepo,
+          packageRepo: packRepo,
+          collaborators: contributersArray,
+          starGazers: packStarGazers,
+          language: language,
         };
-        contributersArray.push(contributor);
-        id++;
+        data.push(singleDependData);
+      } else {
+        continue;
       }
-      const singleDependData: dataObject = {
-        packageName: packName,
-        packageApiRepo: packApiRepo,
-        packageRepo: packRepo,
-        collaborators: contributersArray,
-        starGazers: packStarGazers,
-        language: language,
-      };
-      data.push(singleDependData);
     }
     var tableFormattedData: graphData[] = [];
     for (const singleRepo of data) {
@@ -217,8 +258,7 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
     const formattedData = tableFormattedData.filter(
       (element) => element.type === "User" && element.name !== null
     );
-    console.log(formattedData);
-    console.log(JSON.stringify(formattedData));
+
     if (data && formattedData) {
       dispatch(postDataSuccess(data, formattedData));
     } else {

@@ -49,7 +49,7 @@ const Navbar: React.FC<Props> = (props: Props) => {
         </Link>
       </div>
       <div className="signOut">
-        <a href="http://127.0.0.1:5500/">Sign Out</a>
+        <a href="https://www.hirecontributors.club">Sign Out</a>
       </div>
     </div>
   );
