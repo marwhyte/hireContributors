@@ -24,7 +24,7 @@ const Navbar: React.FC<Props> = (props: Props) => {
   return (
     <div className="nav">
       <div className="logo">
-        <p>PackageEmployer</p>
+        <p>Hire Contributors</p>
       </div>
       <div className="navElements">
         <Link
