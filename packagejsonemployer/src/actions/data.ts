@@ -23,6 +23,10 @@ export const getData = (dependencies: string[], token: string) => {
     var data: dataObject[] = [];
     for (const dependency of dependencies) {
       if (count <= 14) {
+        if (dependency.includes("@")) {
+          count--;
+          continue;
+        }
         const dependancyInfo = await getDependencyInfo(dependency, token);
         if (dependancyInfo === false) {
           continue;
