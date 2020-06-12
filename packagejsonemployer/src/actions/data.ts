@@ -23,32 +23,15 @@ export const getData = (dependencies: string[], token: string) => {
     var data: dataObject[] = [];
     for (const dependency of dependencies) {
       if (count <= 14) {
-        if (dependency.includes("@")) {
-          count--;
-          continue;
-        }
         const dependancyInfo = await getDependencyInfo(dependency, token);
-        if (dependancyInfo === false) {
-          continue;
-        }
-
-        if (
-          !dependancyInfo ||
-          !dependancyInfo.url ||
-          dependancyInfo.url === null ||
-          !dependancyInfo.items
-        ) {
-          continue;
-        }
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
-        var packApiRepo = githubPackage.url;
+        const packApiRepo = githubPackage.url;
         packageRepos.push(packApiRepo);
         const packRepo: string = githubPackage.html_url;
         const packStarGazers: number = githubPackage.stargazers_count;
         const language = githubPackage.language;
         var contributersArray: collaborator[] = [];
-
         if (
           githubPackage &&
           githubPackage.contributors_url &&
@@ -98,8 +81,6 @@ export const getData = (dependencies: string[], token: string) => {
               };
               contributersArray.push(contributor);
               id++;
-            } else {
-              continue;
             }
           }
           const singleDependData: dataObject = {
