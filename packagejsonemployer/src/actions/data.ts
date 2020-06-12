@@ -24,6 +24,9 @@ export const getData = (dependencies: string[], token: string) => {
     for (const dependency of dependencies) {
       if (count <= 14) {
         const dependancyInfo = await getDependencyInfo(dependency, token);
+        if (dependancyInfo === false) {
+          continue;
+        }
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
         const packApiRepo = githubPackage.url;
