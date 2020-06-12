@@ -81,6 +81,8 @@ export const getData = (dependencies: string[], token: string) => {
               };
               contributersArray.push(contributor);
               id++;
+            } else {
+              continue;
             }
           }
           const singleDependData: dataObject = {
