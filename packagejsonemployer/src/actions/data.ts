@@ -29,12 +29,21 @@ export const getData = (dependencies: string[], token: string) => {
         }
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
-        const packApiRepo = githubPackage.url;
-        packageRepos.push(packApiRepo);
+        if (
+          dependancyInfo &&
+          dependancyInfo.url &&
+          dependancyInfo.url !== null
+        ) {
+          var packApiRepo = githubPackage.url;
+          packageRepos.push(packApiRepo);
+        } else {
+          continue;
+        }
         const packRepo: string = githubPackage.html_url;
         const packStarGazers: number = githubPackage.stargazers_count;
         const language = githubPackage.language;
         var contributersArray: collaborator[] = [];
+
         if (
           githubPackage &&
           githubPackage.contributors_url &&
