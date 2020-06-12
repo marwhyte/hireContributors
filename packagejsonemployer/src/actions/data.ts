@@ -31,18 +31,19 @@ export const getData = (dependencies: string[], token: string) => {
         if (dependancyInfo === false) {
           continue;
         }
-        const packName: string = dependency;
-        const githubPackage = dependancyInfo.items[0];
+
         if (
-          dependancyInfo &&
-          dependancyInfo.url &&
-          dependancyInfo.url !== null
+          !dependancyInfo ||
+          !dependancyInfo.url ||
+          dependancyInfo.url === null ||
+          !dependancyInfo.items
         ) {
-          var packApiRepo = githubPackage.url;
-          packageRepos.push(packApiRepo);
-        } else {
           continue;
         }
+        const packName: string = dependency;
+        const githubPackage = dependancyInfo.items[0];
+        var packApiRepo = githubPackage.url;
+        packageRepos.push(packApiRepo);
         const packRepo: string = githubPackage.html_url;
         const packStarGazers: number = githubPackage.stargazers_count;
         const language = githubPackage.language;
