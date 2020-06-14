@@ -22,7 +22,7 @@ export const getData = (dependencies: string[], token: string) => {
     var packageRepos: string[] = [];
     var data: dataObject[] = [];
     for (const dependency of dependencies) {
-      if (count <= 14) {
+      if (count <= 8) {
         const dependancyInfo = await getDependencyInfo(dependency, token);
         const packName: string = dependency;
         const githubPackage = dependancyInfo.items[0];
@@ -50,6 +50,7 @@ export const getData = (dependencies: string[], token: string) => {
             contributersInfo[2],
             contributersInfo[3],
             contributersInfo[4],
+            contributersInfo[5],
           ];
           for (const singleContributer of topContributors) {
             if (

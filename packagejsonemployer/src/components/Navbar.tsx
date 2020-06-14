@@ -49,7 +49,7 @@ const Navbar: React.FC<Props> = (props: Props) => {
         </Link>
       </div>
       <div className="signOut">
-        <a href="https://www.hirecontributors.club">Sign Out</a>
+        <a href="https://hirecontributors.club">Sign Out</a>
       </div>
     </div>
   );
