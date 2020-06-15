@@ -45,7 +45,7 @@ const Jsonupload = (props: Props) => {
   const [token, setToken] = React.useState("");
   React.useEffect(() => {
     if (props.tableData) {
-      props.history.push(`/home?access_token=${token}`);
+      props.history.push(`/find-canidates?access_token=${token}`);
     }
   }, [props.tableData]);
   React.useEffect(() => {
