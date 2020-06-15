@@ -65,7 +65,7 @@ const UploadFile: React.FC<Props> = (props: Props) => {
         files={files}
         allowMultiple={false}
         onremovefile={() => {
-          props.updateJSON("");
+          props.updateJSON("{}");
           setFiles([]);
         }}
         //@ts-ignore
