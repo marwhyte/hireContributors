@@ -64,7 +64,10 @@ const UploadFile: React.FC<Props> = (props: Props) => {
         className="fileUploader"
         files={files}
         allowMultiple={false}
-        onremovefile={() => props.updateJSON("")}
+        onremovefile={() => {
+          props.updateJSON("");
+          setFiles([]);
+        }}
         //@ts-ignore
         onupdatefiles={setFiles}
         labelIdle='Drag & Drop your Package.JSON file or <span class="filepond--label-action">Browse</span>'
