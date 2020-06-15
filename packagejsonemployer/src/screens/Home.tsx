@@ -69,7 +69,6 @@ const Home = (props: Props) => {
   const [whichSelected, setWhichSelected] = React.useState(true);
   const [dumbData, setDumbData] = React.useState(props.gridData);
   React.useEffect(() => {
-    console.log("graphdata", props.gridData);
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
@@ -122,9 +121,7 @@ const Home = (props: Props) => {
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
   }, [token]);
-  React.useEffect(() => {
-    console.log("this", props.gridData);
-  }, [props.gridData]);
+
   const override = css`
     display: block;
     margin: 0 auto;

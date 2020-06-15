@@ -36,7 +36,6 @@ const UploadFile: React.FC<Props> = (props: Props) => {
 
         reader.onload = (event: any) => {
           const textFile = event.target.result;
-          console.log(textFile);
           props.updateJSON(textFile);
         };
         reader.onerror = (event: any) => {

@@ -30,7 +30,6 @@ export async function getContributorsInfo(
     let data = await response.json();
     return data;
   } catch (err) {
-    console.log("ooh noo");
     return false;
   }
 }
@@ -47,7 +46,6 @@ export async function getContributorsAccount(
     let data = await response.json();
     return data;
   } catch (err) {
-    console.log("ooh noo");
     return false;
   }
 }
@@ -61,7 +59,6 @@ export async function getRepository(repoURL: string, token: string) {
     let data = await response.json();
     return data;
   } catch (err) {
-    console.log("ooh noo");
     return false;
   }
 }

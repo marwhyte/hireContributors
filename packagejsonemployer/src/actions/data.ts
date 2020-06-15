@@ -93,7 +93,6 @@ export const getData = (dependencies: string[], token: string) => {
             language: language,
           };
           data.push(singleDependData);
-          console.log("error in data", data);
         }
       } else {
         break;
@@ -128,7 +127,6 @@ export const getData = (dependencies: string[], token: string) => {
           packageRank: rankCount,
         };
         tableFormattedData.push(gridFormatting);
-        console.log("error in nested forloop", tableFormattedData);
         rankCount++;
       }
     }

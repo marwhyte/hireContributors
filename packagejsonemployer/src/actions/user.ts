@@ -17,7 +17,6 @@ export const getUser = (token: string) => {
         Authorization: "token " + token,
       },
     });
-    console.log(results);
     if (results.status !== 200) {
       console.log("theres an error");
       dispatch(getUserFailure());
