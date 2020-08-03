@@ -17,95 +17,103 @@ import {
 export const getData = (dependencies: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());
-    var count = 0;
-    var id = 0;
-    var packageRepos: string[] = [];
-    var data: dataObject[] = [];
-    for (const dependency of dependencies) {
-      if (count <= 8) {
-        const dependancyInfo = await getDependencyInfo(dependency, token);
-        const packName: string = dependency;
-        const githubPackage = dependancyInfo.items[0];
-        const packApiRepo = githubPackage.url;
-        packageRepos.push(packApiRepo);
-        const packRepo: string = githubPackage.html_url;
-        const packStarGazers: number = githubPackage.stargazers_count;
-        const language = githubPackage.language;
-        var contributersArray: collaborator[] = [];
-        if (
-          githubPackage &&
-          githubPackage.contributors_url &&
-          githubPackage.contributors_url !== null
-        ) {
-          const contributersInfo = await getContributorsInfo(
-            githubPackage.contributors_url,
-            token
-          );
-          if (contributersInfo === false) {
-            continue;
-          }
-          const topContributors = [
-            contributersInfo[0],
-            contributersInfo[1],
-            contributersInfo[2],
-            contributersInfo[3],
-            contributersInfo[4],
-            contributersInfo[5],
-          ];
-          for (const singleContributer of topContributors) {
-            if (
-              singleContributer &&
-              singleContributer.url &&
-              singleContributer.url !== null
-            ) {
-              const contributerAccount = await getContributorsAccount(
-                singleContributer.url,
-                token
-              );
-              if (contributerAccount === false) {
-                continue;
-              }
-              const contributor: collaborator = {
-                id: id,
-                name: contributerAccount.name,
-                company: contributerAccount.company,
-                avatarURL: contributerAccount.avatar_url,
-                followers: contributerAccount.followers,
-                following: contributerAccount.following,
-                bio: contributerAccount.bio,
-                hireable: contributerAccount.hireable,
-                contributions: singleContributer.contributions,
-                type: contributerAccount.type,
-                login: contributerAccount.login,
-                location: contributerAccount.location,
-                githubURL: contributerAccount.html_url,
-              };
-              contributersArray.push(contributor);
-              id++;
-            }
-          }
-          const singleDependData: dataObject = {
-            packageName: packName,
-            packageApiRepo: packApiRepo,
-            packageRepo: packRepo,
-            collaborators: contributersArray,
-            starGazers: packStarGazers,
-            language: language,
-          };
-          data.push(singleDependData);
-        }
+    let packageRepos: string[] = [];
+    let data: dataObject[] = [];
+    let amountOfDependencies = dependencies.splice(0, 15);
+    console.log(amountOfDependencies);
+    let promiseAllDependencyInfo: string[] = amountOfDependencies.map(
+      (item) =>
+        `https://api.github.com/search/repositories?q=${item}&sort=stars&order=desc`
+    );
+    const dependanciesSearch: any = await getDependencyInfo(
+      promiseAllDependencyInfo,
+      token
+    );
+    const constDependency = dependanciesSearch.map((obj: any) => {
+      if (obj?.items.length) {
+        return obj.items[0];
       } else {
-        break;
+        return null;
       }
-      count++;
+    });
+    const noEmpties = constDependency.filter((item: any) => item !== null);
+    var promiseAllContributorInfo: string[] = [];
+
+    for (const dependency of noEmpties) {
+      const packName = dependency.name;
+      const packApiRepo = dependency.url;
+      packageRepos.push(packApiRepo);
+      const packRepo: string = dependency.html_url;
+      const packStarGazers: number = dependency.stargazers_count;
+      const language = dependency.language;
+      promiseAllContributorInfo.push(dependency.contributors_url);
     }
-    var tableFormattedData: graphData[] = [];
-    for (const singleRepo of data) {
-      var rankCount = 1;
-      for (const singleContributer of singleRepo.collaborators) {
-        if (singleContributer.type !== "User") {
-          rankCount--;
+    const contributorsSearch: any = await getContributorsInfo(
+      promiseAllContributorInfo,
+      token
+    );
+    let newContributorsSearch = [];
+    for (let i = 0; i < contributorsSearch.length; i++) {
+      newContributorsSearch.push(
+        [...contributorsSearch[i]].filter(
+          (person: any) => person.type === "User"
+        )
+      );
+    }
+    const amountOfContributers = newContributorsSearch.map((person: any) => {
+      return person.splice(0, 10);
+    });
+
+    const contributorPushInto = amountOfContributers.map((repo: any) => {
+      return repo.map((person: any) => person.url);
+    });
+    console.log(contributorPushInto);
+
+    const getContributorPromises = contributorPushInto.map(
+      (contributorURLs: string[]) =>
+        getContributorsAccount(contributorURLs, token)
+    );
+    const results: any = await Promise.all(getContributorPromises);
+    console.log(results);
+    for (let i = 0; i < noEmpties.length; i++) {
+      let contributors: collaborator[] = results[i].map(
+        (repoContributors: any) => {
+          let contributions = amountOfContributers[i].find(
+            (person: any) => person.id === repoContributors.id
+          );
+          return {
+            id: repoContributors.id,
+            name: repoContributors.name,
+            company: repoContributors.company,
+            avatarURL: repoContributors.avatar_url,
+            followers: repoContributors.followers,
+            following: repoContributors.following,
+            bio: repoContributors.bio,
+            hireable: repoContributors.hireable,
+            contributions: contributions.contributions,
+            type: repoContributors.type,
+            login: repoContributors.login,
+            location: repoContributors.location,
+            githubURL: repoContributors.html_url,
+          };
         }
+      );
+      let dataTopush = {
+        packageName: noEmpties[i].name,
+        packageApiRepo: noEmpties[i].url,
+        packageRepo: noEmpties[i].html_url,
+        collaborators: contributors,
+        starGazers: noEmpties[i].stargazers_count,
+        language: noEmpties[i].language,
+      };
+      data.push(dataTopush);
+    }
+
+    var tableFormattedData: graphData[] = [];
+
+    for (const singleRepo of data) {
+      let rankCount = 1;
+      for (const singleContributer of singleRepo.collaborators) {
         const gridFormatting: graphData = {
           id: singleContributer.id,
           name: singleContributer.name,
@@ -130,13 +138,9 @@ export const getData = (dependencies: string[], token: string) => {
         rankCount++;
       }
     }
-    const formattedData = tableFormattedData.filter(
-      (element) => element.type === "User" && element.name !== null
-    );
-
     localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
-    if (data && formattedData) {
-      dispatch(postDataSuccess(data, formattedData));
+    if (data && tableFormattedData) {
+      dispatch(postDataSuccess(data, tableFormattedData));
     } else {
       dispatch(postDataFailure());
     }
@@ -145,91 +149,87 @@ export const getData = (dependencies: string[], token: string) => {
 export const getLocalStorageData = (parsedInfo: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());
-    var id = 0;
     var data: dataObject[] = [];
-    for (const dependency of parsedInfo) {
-      const dependencyInfo = await getRepository(dependency, token);
-      if (dependencyInfo === false) {
-        continue;
-      }
-      const packName: string = dependencyInfo.name;
-      const packApiRepo = dependencyInfo.url;
-      const packRepo: string = dependencyInfo.html_url;
-      const packStarGazers: number = dependencyInfo.stargazers_count;
-      const language = dependencyInfo.language;
-      var contributersArray: collaborator[] = [];
-      if (
-        dependencyInfo &&
-        dependencyInfo.contributors_url !== undefined &&
-        dependencyInfo.contributors_url !== null
-      ) {
-        const contributersInfo = await getContributorsInfo(
-          dependencyInfo.contributors_url,
-          token
-        );
-        if (contributersInfo === false) {
-          continue;
-        }
-        const topContributors = [
-          contributersInfo[0],
-          contributersInfo[1],
-          contributersInfo[2],
-          contributersInfo[3],
-          contributersInfo[4],
-          contributersInfo[5],
-        ];
-        for (const singleContributer of topContributors) {
-          if (
-            singleContributer &&
-            singleContributer.url !== null &&
-            singleContributer.url
-          ) {
-            const contributerAccount = await getContributorsAccount(
-              singleContributer.url,
-              token
-            );
-            if (contributerAccount === false) {
-              continue;
-            }
-            const contributor: collaborator = {
-              id: id,
-              name: contributerAccount.name,
-              company: contributerAccount.company,
-              avatarURL: contributerAccount.avatar_url,
-              followers: contributerAccount.followers,
-              following: contributerAccount.following,
-              bio: contributerAccount.bio,
-              hireable: contributerAccount.hireable,
-              contributions: singleContributer.contributions,
-              type: contributerAccount.type,
-              login: contributerAccount.login,
-              location: contributerAccount.location,
-              githubURL: contributerAccount.html_url,
-            };
-            contributersArray.push(contributor);
-            id++;
-          }
-        }
-        const singleDependData: dataObject = {
-          packageName: packName,
-          packageApiRepo: packApiRepo,
-          packageRepo: packRepo,
-          collaborators: contributersArray,
-          starGazers: packStarGazers,
-          language: language,
-        };
-        data.push(singleDependData);
-      } else {
-        continue;
-      }
+    const dependanciesSearch: any = await getDependencyInfo(parsedInfo, token);
+    console.log(dependanciesSearch);
+
+    var promiseAllContributorInfo: string[] = [];
+    let packageRepos = [];
+    for (const dependency of dependanciesSearch) {
+      const packName = dependency.name;
+      const packApiRepo = dependency.url;
+      packageRepos.push(packApiRepo);
+      const packRepo: string = dependency.html_url;
+      const packStarGazers: number = dependency.stargazers_count;
+      const language = dependency.language;
+      promiseAllContributorInfo.push(dependency.contributors_url);
     }
-    var tableFormattedData: graphData[] = [];
-    for (const singleRepo of data) {
-      var rankCount = 1;
-      for (const singleContributer of singleRepo.collaborators) {
-        if (singleContributer.type !== "User") {
-          rankCount--;
+    const contributorsSearch: any = await getContributorsInfo(
+      promiseAllContributorInfo,
+      token
+    );
+    let newContributorsSearch = [];
+    for (let i = 0; i < contributorsSearch.length; i++) {
+      newContributorsSearch.push(
+        [...contributorsSearch[i]].filter(
+          (person: any) => person.type === "User"
+        )
+      );
+    }
+    const amountOfContributers = newContributorsSearch.map((person: any) => {
+      return person.splice(0, 10);
+    });
+
+    const contributorPushInto = amountOfContributers.map((repo: any) => {
+      return repo.map((person: any) => person.url);
+    });
+    console.log(contributorPushInto);
+
+    const getContributorPromises = contributorPushInto.map(
+      (contributorURLs: string[]) =>
+        getContributorsAccount(contributorURLs, token)
+    );
+    const results: any = await Promise.all(getContributorPromises);
+    console.log(results);
+    for (let i = 0; i < dependanciesSearch.length; i++) {
+      let contributors: collaborator[] = results[i].map(
+        (repoContributors: any) => {
+          let contributions = amountOfContributers[i].find(
+            (person: any) => person.id === repoContributors.id
+          );
+          return {
+            id: repoContributors.id,
+            name: repoContributors.name,
+            company: repoContributors.company,
+            avatarURL: repoContributors.avatar_url,
+            followers: repoContributors.followers,
+            following: repoContributors.following,
+            bio: repoContributors.bio,
+            hireable: repoContributors.hireable,
+            contributions: contributions.contributions,
+            type: repoContributors.type,
+            login: repoContributors.login,
+            location: repoContributors.location,
+            githubURL: repoContributors.html_url,
+          };
         }
+      );
+      let dataTopush = {
+        packageName: dependanciesSearch[i].name,
+        packageApiRepo: dependanciesSearch[i].url,
+        packageRepo: dependanciesSearch[i].html_url,
+        collaborators: contributors,
+        starGazers: dependanciesSearch[i].stargazers_count,
+        language: dependanciesSearch[i].language,
+      };
+      data.push(dataTopush);
+    }
+
+    var tableFormattedData: graphData[] = [];
+
+    for (const singleRepo of data) {
+      let rankCount = 1;
+      for (const singleContributer of singleRepo.collaborators) {
         const gridFormatting: graphData = {
           id: singleContributer.id,
           name: singleContributer.name,
@@ -254,15 +254,129 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
         rankCount++;
       }
     }
-    const formattedData = tableFormattedData.filter(
-      (element) => element.type === "User" && element.name !== null
-    );
-
-    if (data && formattedData) {
-      dispatch(postDataSuccess(data, formattedData));
+    localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
+    if (data && tableFormattedData) {
+      dispatch(postDataSuccess(data, tableFormattedData));
     } else {
       dispatch(postDataFailure());
     }
+
+    // for (const dependency of parsedInfo) {
+    //   const dependencyInfo = await getRepository(dependency, token);
+    //   if (dependencyInfo === false) {
+    //     continue;
+    //   }
+    //   const packName: string = dependencyInfo.name;
+    //   const packApiRepo = dependencyInfo.url;
+    //   const packRepo: string = dependencyInfo.html_url;
+    //   const packStarGazers: number = dependencyInfo.stargazers_count;
+    //   const language = dependencyInfo.language;
+    //   var contributersArray: collaborator[] = [];
+    //   if (
+    //     dependencyInfo &&
+    //     dependencyInfo.contributors_url !== undefined &&
+    //     dependencyInfo.contributors_url !== null
+    //   ) {
+    //     const contributersInfo = await getContributorsInfo(
+    //       dependencyInfo.contributors_url,
+    //       token
+    //     );
+    //     if (contributersInfo === false) {
+    //       continue;
+    //     }
+    //     const topContributors = [
+    //       contributersInfo[0],
+    //       contributersInfo[1],
+    //       contributersInfo[2],
+    //       contributersInfo[3],
+    //       contributersInfo[4],
+    //       contributersInfo[5],
+    //     ];
+    //     for (const singleContributer of topContributors) {
+    //       if (
+    //         singleContributer &&
+    //         singleContributer.url !== null &&
+    //         singleContributer.url
+    //       ) {
+    //         const contributerAccount = await getContributorsAccount(
+    //           singleContributer.url,
+    //           token
+    //         );
+    //         if (contributerAccount === false) {
+    //           continue;
+    //         }
+    //         const contributor: collaborator = {
+    //           id: id,
+    //           name: contributerAccount.name,
+    //           company: contributerAccount.company,
+    //           avatarURL: contributerAccount.avatar_url,
+    //           followers: contributerAccount.followers,
+    //           following: contributerAccount.following,
+    //           bio: contributerAccount.bio,
+    //           hireable: contributerAccount.hireable,
+    //           contributions: singleContributer.contributions,
+    //           type: contributerAccount.type,
+    //           login: contributerAccount.login,
+    //           location: contributerAccount.location,
+    //           githubURL: contributerAccount.html_url,
+    //         };
+    //         contributersArray.push(contributor);
+    //         id++;
+    //       }
+    //     }
+    //     const singleDependData: dataObject = {
+    //       packageName: packName,
+    //       packageApiRepo: packApiRepo,
+    //       packageRepo: packRepo,
+    //       collaborators: contributersArray,
+    //       starGazers: packStarGazers,
+    //       language: language,
+    //     };
+    //     data.push(singleDependData);
+    //   } else {
+    //     continue;
+    //   }
+    // }
+    // var tableFormattedData: graphData[] = [];
+    // for (const singleRepo of data) {
+    //   var rankCount = 1;
+    //   for (const singleContributer of singleRepo.collaborators) {
+    //     if (singleContributer.type !== "User") {
+    //       rankCount--;
+    //     }
+    //     const gridFormatting: graphData = {
+    //       id: singleContributer.id,
+    //       name: singleContributer.name,
+    //       packageRepo: singleRepo.packageRepo,
+    //       packageName: singleRepo.packageName,
+    //       company: singleContributer.company,
+    //       avatarURL: singleContributer.avatarURL,
+    //       followers: singleContributer.followers,
+    //       following: singleContributer.following,
+    //       bio: singleContributer.bio,
+    //       hireable: singleContributer.hireable,
+    //       starGazers: singleRepo.starGazers,
+    //       language: singleRepo.language,
+    //       contributions: singleContributer.contributions,
+    //       type: singleContributer.type,
+    //       login: singleContributer.login,
+    //       location: singleContributer.location,
+    //       githubURL: singleContributer.githubURL,
+    //       packageRank: rankCount,
+    //     };
+    //     tableFormattedData.push(gridFormatting);
+    //     rankCount++;
+    //   }
+    // }
+    // const formattedData = tableFormattedData.filter(
+    //   (element) => element.type === "User" && element.name !== null
+    // );
+
+    // if (data && formattedData) {
+    //   dispatch(postDataSuccess(data, formattedData));
+    // } else {
+    //   dispatch(postDataFailure());
+    // }
   };
 };
 
