@@ -5,7 +5,12 @@
 
 Hire people that helped make your code base possible, and contact them efficiently with a customized email template!
 
-
+## Tech Stack
+ - Typescript 
+ - React
+ - Redux
+  ### Backend for oAuth (private repository)
+    - Node
 
 ## Contributing to hireContributors
 
