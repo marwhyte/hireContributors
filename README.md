@@ -9,7 +9,7 @@ Hire people that helped make your code base possible, and contact them efficient
  - Typescript 
  - React
  - Redux
-### Backend for oAuth (private repository)
+### Backend for OAuth (private repository)
  - Node
 
 ## Contributing to hireContributors
