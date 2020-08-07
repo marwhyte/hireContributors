@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FilePond, registerPlugin, File } from "react-filepond";
+import { FilePond } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";

@@ -29,7 +29,7 @@ import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
 import { RouteComponentProps, Link } from "react-router-dom";
-import { dumbyDataGraph } from "../functions/dumbyData";
+// import { dumbyDataGraph } from "../functions/dumbyData";
 import { getLocalStorageData } from "../actions/data";
 
 interface DispatchProps {}

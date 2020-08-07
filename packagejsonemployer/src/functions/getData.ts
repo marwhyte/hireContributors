@@ -1,5 +1,3 @@
-import { dataObject, collaborator } from "../types/DataObject";
-
 const getInfo = (url: string, token: string) => {
   let request = new Request(url, {
     headers: new Headers({

@@ -12,7 +12,6 @@ import {
   getContributorsAccount,
   getContributorsInfo,
   getDependencyInfo,
-  getRepository,
 } from "../functions/getData";
 export const getData = (dependencies: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
@@ -40,12 +39,8 @@ export const getData = (dependencies: string[], token: string) => {
     var promiseAllContributorInfo: string[] = [];
 
     for (const dependency of noEmpties) {
-      const packName = dependency.name;
       const packApiRepo = dependency.url;
       packageRepos.push(packApiRepo);
-      const packRepo: string = dependency.html_url;
-      const packStarGazers: number = dependency.stargazers_count;
-      const language = dependency.language;
       promiseAllContributorInfo.push(dependency.contributors_url);
     }
     const contributorsSearch: any = await getContributorsInfo(
@@ -156,12 +151,8 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
     var promiseAllContributorInfo: string[] = [];
     let packageRepos = [];
     for (const dependency of dependanciesSearch) {
-      const packName = dependency.name;
       const packApiRepo = dependency.url;
       packageRepos.push(packApiRepo);
-      const packRepo: string = dependency.html_url;
-      const packStarGazers: number = dependency.stargazers_count;
-      const language = dependency.language;
       promiseAllContributorInfo.push(dependency.contributors_url);
     }
     const contributorsSearch: any = await getContributorsInfo(

@@ -10,14 +10,13 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../store/configureStore";
 import queryString from "query-string";
-import { dumbyDataGraph } from "../functions/dumbyData";
+// import { dumbyDataGraph } from "../functions/dumbyData";
 import "../styles/SingleView.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import {
   faUsers,
   faAward,
-  faCopy,
   faArchive,
   faEnvelopeOpenText,
   faTimes,
@@ -25,8 +24,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
-import { NONAME } from "dns";
-import Toggle from "react-toggle";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -51,7 +48,7 @@ type Props = DispatchProps & StateProps & OwnProps;
 
 const SingleView: React.FC<Props> = (props: Props) => {
   const [token, setToken] = React.useState("");
-  const [dumbData, setDumbData] = React.useState(props.gridData);
+  // const [dumbData, setDumbData] = React.useState(props.gridData);
   const [reachMax, setReachMax] = React.useState(false);
   const [singleInfo, setSingleInfo] = React.useState<graphData>({
     id: 0,
