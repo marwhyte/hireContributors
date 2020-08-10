@@ -18,7 +18,7 @@ export const getData = (dependencies: string[], token: string) => {
     dispatch(postDataStart());
     let packageRepos: string[] = [];
     let data: dataObject[] = [];
-    let amountOfDependencies = dependencies.splice(0, 15);
+    let amountOfDependencies = dependencies.splice(0, 12);
     console.log(amountOfDependencies);
     let promiseAllDependencyInfo: string[] = amountOfDependencies.map(
       (item) =>
@@ -56,7 +56,7 @@ export const getData = (dependencies: string[], token: string) => {
       );
     }
     const amountOfContributers = newContributorsSearch.map((person: any) => {
-      return person.splice(0, 10);
+      return person.splice(0, 8);
     });
 
     const contributorPushInto = amountOfContributers.map((repo: any) => {
