@@ -37,7 +37,7 @@ const Navbar: React.FC<Props> = (props: Props) => {
           to={singleView}
           className={props.selected === "SingleView" ? "selected" : "nothing"}
         >
-          <FontAwesomeIcon icon={faSearchLocation} /> Explore Canidates
+          <FontAwesomeIcon icon={faSearchLocation} /> Explore candidates
         </Link>
         <Link
           to={email}

@@ -150,7 +150,7 @@ const Jsonupload = (props: Props) => {
             <p style={{ color: "#007bff" }}>Back To Marketing Page</p>
           </a>
           <div className="headerUploadDocument">
-            <h1>Upload Your Package.json To Find Canidates</h1>
+            <h1>Upload Your Package.json To Find Candidates</h1>
             <p className="smallTextUpload">
               All of your information is on the client side, none of your data
               is saved.

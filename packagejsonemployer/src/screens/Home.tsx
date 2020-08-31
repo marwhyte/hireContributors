@@ -278,7 +278,7 @@ const Home = (props: Props) => {
                   style={{ fontSize: 25, marginBottom: 40 }}
                 >
                   <FontAwesomeIcon icon={faSearchLocation} /> You haven't
-                  Favorited anyone yet, find potential canidates using the easy
+                  Favorited anyone yet, find potential candidates using the easy
                   to use explore feature <br></br> or view all with the Toggle
                   Above
                 </p>
@@ -287,7 +287,7 @@ const Home = (props: Props) => {
                   className="templateButton click"
                   style={{ textDecoration: "none", padding: 10 }}
                 >
-                  Explore Canidates
+                  Explore Candidates
                 </Link>
               </div>
             </div>

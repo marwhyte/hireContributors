@@ -223,7 +223,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
             className="templateButton click"
             style={{ textDecoration: "none", padding: 10 }}
           >
-            Favorite Canidates
+            Favorite Candidates
           </Link>
         </div>
       ) : (
