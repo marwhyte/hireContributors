@@ -55,7 +55,7 @@ const Jsonupload = (props: Props) => {
     props.getUser(accessToken);
     localStorage.removeItem("favorites");
     localStorage.removeItem("count");
-    localStorage.remoteItem("packageRepo");
+    localStorage.removeItem("packageRepo");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React.useEffect(() => {
