@@ -47,11 +47,13 @@ const Jsonupload = (props: Props) => {
     if (props.tableData) {
       props.history.push(`/find-canidates?access_token=${token}`);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.tableData]);
   React.useEffect(() => {
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React.useEffect(() => {
     if (!props.loading) {
@@ -63,6 +65,7 @@ const Jsonupload = (props: Props) => {
         setToken(accessToken);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.loading]);
 
   const override = css`

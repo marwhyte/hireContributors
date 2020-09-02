@@ -27,6 +27,7 @@ interface OwnProps extends RouteComponentProps<any> {}
 type Props = DispatchProps & StateProps & OwnProps;
 
 const EmailTemplate: React.FC<Props> = (props: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [content, setContent] = React.useState(
     "use {{NAME}} as the canadates name placeholder and {{PACKAGENAME}} as the placeholder for the package the canidate worked on."
   );
@@ -38,6 +39,7 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React.useEffect(() => {
     if (!props.loading) {
@@ -53,6 +55,7 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
         }
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.loading]);
 
   const setText = (e: string) => {

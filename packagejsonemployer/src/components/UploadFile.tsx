@@ -44,6 +44,7 @@ const UploadFile: React.FC<Props> = (props: Props) => {
         reader.readAsText(file);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [files]);
 
   return (

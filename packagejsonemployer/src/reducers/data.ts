@@ -1,6 +1,6 @@
 import { graphData } from "./../types/DataObject";
 import { DataActionTypes } from "../types/AppActions";
-import { collaborator, dataObject } from "../types/DataObject";
+import { dataObject } from "../types/DataObject";
 
 const initialDataState: {
   data?: dataObject[];

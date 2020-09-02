@@ -84,6 +84,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -96,6 +97,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
         setToken(accessToken);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.loading]);
   React.useEffect(() => {
     const localStorageInfo = localStorage.getItem("packageRepo");
@@ -109,6 +111,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
       console.log("Getting Data!");
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
   const override = css`
     display: block;

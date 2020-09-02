@@ -74,6 +74,7 @@ const Home = (props: Props) => {
     props.getUser(accessToken);
     // localStorage.removeItem("favorites")
     // localStorage.removeItem("count")
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React.useEffect(() => {
     if (props.gridData) {
@@ -103,6 +104,7 @@ const Home = (props: Props) => {
         setToken(accessToken);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.loading]);
   React.useEffect(() => {
     if (whichSelected) {
@@ -120,6 +122,7 @@ const Home = (props: Props) => {
       console.log("Getting Data!");
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   const override = css`
