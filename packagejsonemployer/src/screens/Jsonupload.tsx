@@ -53,6 +53,9 @@ const Jsonupload = (props: Props) => {
     var parsed = queryString.parse(window.location.search);
     var accessToken: any = parsed.access_token;
     props.getUser(accessToken);
+    localStorage.removeItem("favorites");
+    localStorage.removeItem("count");
+    localStorage.remoteItem("packageRepo");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   React.useEffect(() => {
