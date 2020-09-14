@@ -7,7 +7,6 @@ import {
   faHeart,
   faSearchLocation,
 } from "@fortawesome/free-solid-svg-icons";
-import { faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { faAward } from "@fortawesome/free-solid-svg-icons";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -31,6 +30,7 @@ import { bindActionCreators } from "redux";
 import { RouteComponentProps, Link } from "react-router-dom";
 // import { dumbyDataGraph } from "../functions/dumbyData";
 import { getLocalStorageData } from "../actions/data";
+import Person from "../components/Person";
 
 interface DispatchProps {}
 
@@ -298,70 +298,7 @@ const Home = (props: Props) => {
           {dumbData ? (
             <div className="wholeGrid">
               {dumbData.map((person) => (
-                <div className="personContainer">
-                  <div className="person">
-                    <img
-                      src={person.avatarURL}
-                      alt="Users Github Profile"
-                      className="profilePicture"
-                    />
-                    <h1>{person.name}</h1>
-                    <p style={{ maxHeight: 37, overflow: "hidden" }}>
-                      {person.bio && person.bio.length >= 77
-                        ? person.bio.substring(0, 70) + " ..."
-                        : person.bio}
-                    </p>
-                    <p>
-                      <FontAwesomeIcon
-                        icon={faBoxOpen}
-                        style={{ marginRight: 5 }}
-                      />
-                      {person.packageName}
-                    </p>
-                    <div className="RankingHome">
-                      <FontAwesomeIcon
-                        icon={faAward}
-                        size="2x"
-                        className="awardIcon"
-                        style={
-                          person.packageRank === 1
-                            ? { color: "#FFDF00" }
-                            : person.packageRank === 2
-                            ? { color: "	#C0C0C0" }
-                            : { color: "#cd7f32" }
-                        }
-                      />
-                      <p className="packageInfoMore">
-                        contributor #{person.packageRank}
-                      </p>
-                    </div>
-                    <p>{person.company}</p>
-                  </div>
-                  <div className="personButtons">
-                    <button
-                      className="infoButton"
-                      onClick={() => {
-                        setModalInfo(person);
-                        setOpen(true);
-                      }}
-                    >
-                      More Info
-                    </button>
-                    <button
-                      className="inbox"
-                      onClick={() =>
-                        copyEmail(
-                          person.name !== null
-                            ? person.name
-                            : "SomethingWentWrong",
-                          person.packageName
-                        )
-                      }
-                    >
-                      <FontAwesomeIcon icon={faEnvelopeOpenText} /> Copy Email
-                    </button>
-                  </div>
-                </div>
+                <Person person={person} copyEmail={copyEmail} setModalInfo={setModalInfo} setOpen={setOpen} />
               ))}
             </div>
           ) : (
