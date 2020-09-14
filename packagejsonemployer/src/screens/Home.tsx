@@ -1,12 +1,12 @@
 import * as React from "react";
 import queryString from "query-string";
 import "../styles/Home.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBoxOpen,
   faHeart,
   faSearchLocation,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAward } from "@fortawesome/free-solid-svg-icons";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
@@ -31,6 +31,7 @@ import { RouteComponentProps, Link } from "react-router-dom";
 // import { dumbyDataGraph } from "../functions/dumbyData";
 import { getLocalStorageData } from "../actions/data";
 import Person from "../components/Person";
+import ToggleSelect from "../components/ToggleSelect";
 
 interface DispatchProps {}
 
@@ -212,68 +213,16 @@ const Home = (props: Props) => {
       ) : (
         <div className="home">
           {dumbData && dumbData.length > 0 ? (
-            <div style={{ width: "55%", marginLeft: "auto" }}>
-              <div className="togetherToggle">
-                <label>
-                  <Toggle
-                    className="myToggle"
-                    defaultChecked={whichSelected}
-                    icons={{
-                      checked: (
-                        <FontAwesomeIcon color={"white"} icon={faHeart} />
-                      ),
-                      unchecked: null,
-                    }}
-                    onChange={() => setWhichSelected((boolean) => !boolean)}
-                  />
-                </label>
-                <p
-                  style={{
-                    margin: 0,
-                    fontWeight: 500,
-                    color: "#333333",
-                    lineHeight: 1.1,
-                    fontSize: 20,
-                    paddingLeft: 10,
-                    paddingBottom: 2,
-                  }}
-                >
-                  {whichSelected ? "My Favorites" : "All"}
-                </p>
-              </div>
-            </div>
+            <ToggleSelect
+              whichSelected={whichSelected}
+              setWhichSelected={setWhichSelected}
+            />
           ) : (
             <div>
-              <div style={{ width: "55%", marginLeft: "auto" }}>
-                <div className="togetherToggle">
-                  <label>
-                    <Toggle
-                      className="myToggle"
-                      defaultChecked={whichSelected}
-                      icons={{
-                        checked: (
-                          <FontAwesomeIcon color={"white"} icon={faHeart} />
-                        ),
-                        unchecked: null,
-                      }}
-                      onChange={() => setWhichSelected((boolean) => !boolean)}
-                    />
-                  </label>
-                  <p
-                    style={{
-                      margin: 0,
-                      fontWeight: 500,
-                      color: "#333333",
-                      lineHeight: 1.1,
-                      fontSize: 20,
-                      paddingLeft: 10,
-                      paddingBottom: 2,
-                    }}
-                  >
-                    {whichSelected ? "My Favorites" : "All"}
-                  </p>
-                </div>
-              </div>
+              <ToggleSelect
+                whichSelected={whichSelected}
+                setWhichSelected={setWhichSelected}
+              />
               <div className="maximumValue">
                 <p
                   className="packageInfoMoreSingle"
@@ -298,7 +247,12 @@ const Home = (props: Props) => {
           {dumbData ? (
             <div className="wholeGrid">
               {dumbData.map((person) => (
-                <Person person={person} copyEmail={copyEmail} setModalInfo={setModalInfo} setOpen={setOpen} />
+                <Person
+                  person={person}
+                  copyEmail={copyEmail}
+                  setModalInfo={setModalInfo}
+                  setOpen={setOpen}
+                />
               ))}
             </div>
           ) : (
