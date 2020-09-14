@@ -19,6 +19,7 @@ export const getData = (dependencies: string[], token: string) => {
     let packageRepos: string[] = [];
     let data: dataObject[] = [];
     let amountOfDependencies = dependencies.splice(0, 12);
+    let allIDS: number[] = [];
     console.log(amountOfDependencies);
     let promiseAllDependencyInfo: string[] = amountOfDependencies.map(
       (item) =>
@@ -103,6 +104,23 @@ export const getData = (dependencies: string[], token: string) => {
       };
       data.push(dataTopush);
     }
+    data.forEach((item) =>
+      item.collaborators.forEach((collab) => allIDS.push(collab.id))
+    );
+
+    // const count = (theIDS: number[]) => {
+    //   //@ts-ignore
+    //   theIDS.reduce((a, b) => ({ ...a, [b]: (a[b] || 0) + 1 }), {}); // don't forget to initialize the accumulator
+    // };
+
+    // const duplicates = (dict: any) => Object.keys(dict).filter((a) => dict[a] > 1);
+
+    // const duplicatedIDS = duplicates(count(allIDS))
+    // data = data.map(item => item.collaborators.filter(collab => {
+    //   const stringCollabID = collab.id.toString()
+    //   return !duplicatedIDS.includes(stringCollabID)
+    // }
+    //   ));
 
     var tableFormattedData: graphData[] = [];
 
@@ -133,9 +151,17 @@ export const getData = (dependencies: string[], token: string) => {
         rankCount++;
       }
     }
+
+    const seen = new Set();
+    const filteredArr = tableFormattedData.filter((el) => {
+      const duplicate = seen.has(el.id);
+      seen.add(el.id);
+      return !duplicate;
+    });
+
     localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
-    if (data && tableFormattedData) {
-      dispatch(postDataSuccess(data, tableFormattedData));
+    if (data && filteredArr) {
+      dispatch(postDataSuccess(data, filteredArr));
     } else {
       dispatch(postDataFailure());
     }
@@ -245,9 +271,16 @@ export const getLocalStorageData = (parsedInfo: string[], token: string) => {
         rankCount++;
       }
     }
+    const seen = new Set();
+    const filteredArr = tableFormattedData.filter((el) => {
+      const duplicate = seen.has(el.id);
+      seen.add(el.id);
+      return !duplicate;
+    });
+
     localStorage.setItem("packageRepo", JSON.stringify(packageRepos));
-    if (data && tableFormattedData) {
-      dispatch(postDataSuccess(data, tableFormattedData));
+    if (data && filteredArr) {
+      dispatch(postDataSuccess(data, filteredArr));
     } else {
       dispatch(postDataFailure());
     }

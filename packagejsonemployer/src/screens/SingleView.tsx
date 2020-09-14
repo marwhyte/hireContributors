@@ -1,6 +1,6 @@
 import * as React from "react";
 import Navbar from "../components/Navbar";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import { dataObject, graphData } from "../types/DataObject";
 import { getUser } from "../actions/user";
 import { getLocalStorageData } from "../actions/data";
@@ -12,20 +12,13 @@ import { AppState } from "../store/configureStore";
 import queryString from "query-string";
 // import { dumbyDataGraph } from "../functions/dumbyData";
 import "../styles/SingleView.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
-import {
-  faUsers,
-  faAward,
-  faArchive,
-  faEnvelopeOpenText,
-  faTimes,
-  faHeart,
-} from "@fortawesome/free-solid-svg-icons";
+
 import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MaxPeople from "../components/MaxPeople";
+import PersonProfile from "../components/PersonProfile";
 
 interface DispatchProps {}
 
@@ -81,11 +74,12 @@ const SingleView: React.FC<Props> = (props: Props) => {
     }
   }, [personCount, props.gridData]);
   React.useEffect(() => {
-    var parsed = queryString.parse(window.location.search);
-    var accessToken: any = parsed.access_token;
-    props.getUser(accessToken);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!props.authenticated) {
+      var parsed = queryString.parse(window.location.search);
+      var accessToken: any = parsed.access_token;
+      props.getUser(accessToken);
+    }
+  }, [props]);
 
   React.useEffect(() => {
     if (!props.loading) {
@@ -97,8 +91,7 @@ const SingleView: React.FC<Props> = (props: Props) => {
         setToken(accessToken);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.loading]);
+  }, [props.loading, props.authenticated]);
   React.useEffect(() => {
     const localStorageInfo = localStorage.getItem("packageRepo");
     if (props.gridData) {
@@ -111,82 +104,13 @@ const SingleView: React.FC<Props> = (props: Props) => {
       console.log("Getting Data!");
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, props]);
   const override = css`
     display: block;
     margin: 0 auto;
     border-color: red;
   `;
-  const deleteUser = (id: number) => {
-    var number = Number(localStorage.getItem("count"));
-    const newVal = number === null || number === undefined ? 1 : number + 1;
-    localStorage.setItem("count", newVal.toString());
-    setPersonCount(personCount + 1);
-  };
-  const favoriteUser = (id: number) => {
-    var newFav = localStorage.getItem("favorites");
-    const array =
-      newFav === null || newFav === undefined ? [] : JSON.parse(newFav);
-    const final = [...array, id];
-    localStorage.setItem("count", final.length.toString());
-    localStorage.setItem("favorites", JSON.stringify(final));
-    setPersonCount(personCount + 1);
-  };
-  const goToLinkedIn = (name: string) => {
-    const nameArray = name.split(" ");
-    if (nameArray.length === 1) {
-      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}`;
-      window.open(link, "_blank");
-    } else {
-      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}%20${nameArray[1]}`;
-      window.open(link, "_blank");
-    }
-  };
-  const copyEmail = (canidateName: string, canidatePackage: string) => {
-    var email = localStorage.getItem("emailTemplate");
-    if (email === null || email === undefined) {
-      const defaultString = `Hello ${canidateName},\n I noticed your work at ${canidatePackage} and was impressed, would you be interested in having a conversion about possible careers? If so, reach out!\nSincerely`;
-      toast.warning(
-        "⚠️ Using Default Email Template, it is recommended to create your own Template!",
-        {
-          position: "top-right",
-          autoClose: 7000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-      toast.success("📧Template email with canidate info copied to clipboard", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      navigator.clipboard.writeText(defaultString);
-    } else {
-      const packageReplace = email.replace(/{{PACKAGENAME}}/g, canidatePackage);
-      const nameReplace = packageReplace.replace(/{{NAME}}/g, canidateName);
-      navigator.clipboard.writeText(nameReplace);
-      toast.success(
-        "📧Your Customized Email with canidate info was copied to clipboard",
-        {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-    }
-  };
+
   return (
     <div className="wholeSingleView">
       <ToastContainer
@@ -213,185 +137,13 @@ const SingleView: React.FC<Props> = (props: Props) => {
           />
         </div>
       ) : reachMax ? (
-        <div className="maximumValue">
-          <p
-            className="packageInfoMoreSingle"
-            style={{ fontSize: 25, marginBottom: 40 }}
-          >
-            <FontAwesomeIcon icon={faArchive} /> You've Gone Through All The
-            Possible Connections with this Package.JSON!
-          </p>
-          <Link
-            to={"/home?access_token=" + token}
-            className="templateButton click"
-            style={{ textDecoration: "none", padding: 10 }}
-          >
-            Favorite Candidates
-          </Link>
-        </div>
+        <MaxPeople token={token} />
       ) : (
-        <div className="spacebetweenSingle">
-          <div className="singleView">
-            <p className="moreAboutSingle">More about {singleInfo.name}</p>
-
-            {singleInfo.avatarURL !== null && (
-              <img
-                src={singleInfo.avatarURL}
-                alt="Users Github Profile"
-                className="profilePictureMoreSingle"
-              />
-            )}
-            <h1 className="moreMainNameSingle">
-              {singleInfo.name}
-              <span className="locationSingle">{singleInfo.location}</span>
-            </h1>
-            <div className="moreAllPackageInfoSingle">
-              <p className="packageNameMoreBoldSingle">
-                Package Info:{" "}
-                <span
-                  className="packageLinkSingle"
-                  onClick={() => window.open(singleInfo.packageRepo, "_blank")}
-                >
-                  {singleInfo.packageName}
-                </span>
-              </p>
-              <p className="packageNameMoreBoldSingle">
-                <span className="stargazersMoreSingle">
-                  {singleInfo.starGazers}
-                </span>
-                <span className="packageInfoMoreSingle"> stargazers</span>
-              </p>
-              <div className="sameLineSingle">
-                <p>
-                  <span className="packageNameMoreBoldSingleIf">
-                    {" "}
-                    Language:{" "}
-                  </span>
-                </p>
-                <p>
-                  <span className="packageInfoMoreSingle">
-                    {singleInfo.language}
-                  </span>
-                </p>
-              </div>
-              <div className="sameLineSingle">
-                <FontAwesomeIcon
-                  icon={faAward}
-                  size="2x"
-                  className="awardIconSingle"
-                  style={
-                    singleInfo.packageRank === 1
-                      ? { color: "#FFDF00" }
-                      : singleInfo.packageRank === 2
-                      ? { color: "	#C0C0C0" }
-                      : { color: "#cd7f32" }
-                  }
-                />
-                <p className="packageInfoMoreSingle">
-                  contributor #{singleInfo.packageRank}
-                </p>
-              </div>
-            </div>
-            <div className="ptagsSingle">
-              <p
-                className={
-                  singleInfo.bio !== null ? "infoPTagSingle" : "displayNone"
-                }
-              >
-                <span className="boldMore">Bio:</span>
-                {singleInfo.bio}
-              </p>
-              <p
-                className={
-                  singleInfo.company !== null ? "infoPTagSingle" : "displayNone"
-                }
-              >
-                Company: {singleInfo.company}
-              </p>
-              {singleInfo.hireable ? (
-                <p className="infoPTagSingle">Hireable: Yes</p>
-              ) : (
-                <div className="displayNoneSingle"></div>
-              )}
-              <div className="followersSingle">
-                <p className="followerMarginSingle">
-                  <span className="boldMoreSingle">
-                    <FontAwesomeIcon icon={faGithub} className="usersIcon" />
-                    Github Profile:
-                  </span>
-                  <span
-                    className="loginInfoMoreSingle"
-                    onClick={() => window.open(singleInfo.githubURL, "_blank")}
-                  >
-                    {singleInfo.login}
-                  </span>
-                </p>
-                <p className="followerMarginSingle">
-                  <span className="boldMoreSingle">
-                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                    Followers:
-                  </span>
-                  {singleInfo.followers}
-                </p>
-
-                <p>
-                  <span className="boldMore">
-                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                    Following:
-                  </span>
-                  {singleInfo.following}
-                </p>
-              </div>
-              <p
-                onClick={() =>
-                  singleInfo.name !== null && goToLinkedIn(singleInfo.name)
-                }
-                className="loginInfoMoreSingle"
-                style={{
-                  fontSize: 16,
-                  fontWeight: 500,
-                  lineHeight: 1.1,
-                  marginTop: 40,
-                }}
-              >
-                <FontAwesomeIcon icon={faLinkedin} /> LinkedIn Search
-              </p>
-              <button
-                className="inboxSingle"
-                onClick={() =>
-                  copyEmail(
-                    singleInfo.name !== null
-                      ? singleInfo.name
-                      : "SomethingWentWrong",
-                    singleInfo.packageName
-                  )
-                }
-              >
-                <FontAwesomeIcon icon={faEnvelopeOpenText} /> Copy Email
-              </button>
-            </div>
-          </div>
-
-          <div className="buttonsSingleView">
-            <button
-              className="templateButtonRed click"
-              onClick={() => {
-                deleteUser(singleInfo.id);
-              }}
-            >
-              <FontAwesomeIcon icon={faTimes} /> Remove
-            </button>
-            <button
-              onClick={() => {
-                favoriteUser(singleInfo.id);
-              }}
-              className="templateButton click"
-            >
-              {" "}
-              <FontAwesomeIcon icon={faHeart} /> Favorite
-            </button>
-          </div>
-        </div>
+        <PersonProfile
+          personCount={personCount}
+          singleInfo={singleInfo}
+          setPersonCount={setPersonCount}
+        />
       )}
     </div>
   );

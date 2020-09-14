@@ -1,8 +1,6 @@
 import * as React from "react";
 import "../styles/EmailTemplate.scss";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy, faCloudDownloadAlt } from "@fortawesome/free-solid-svg-icons";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import queryString from "query-string";
 import { getUser } from "../actions/user";
@@ -13,6 +11,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { AppState } from "../store/configureStore";
 import Navbar from "../components/Navbar";
+import EmailCreatorMain from "../components/EmailCreatorMain";
 
 interface DispatchProps {
   getUser: typeof getUser;
@@ -36,11 +35,12 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
   );
   const [token, setToken] = React.useState("");
   React.useEffect(() => {
-    var parsed = queryString.parse(window.location.search);
-    var accessToken: any = parsed.access_token;
-    props.getUser(accessToken);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!props.authenticated) {
+      var parsed = queryString.parse(window.location.search);
+      var accessToken: any = parsed.access_token;
+      props.getUser(accessToken);
+    }
+  }, [props]);
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
@@ -55,25 +55,8 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
         }
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.loading]);
+  }, [props.loading, props.authenticated]);
 
-  const setText = (e: string) => {
-    setTextValue(e);
-  };
-  const templateSaved = () =>
-    toast.success("✔️ Email Template Saved!", {
-      position: "top-right",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  const saveTemplateToLocal = () => {
-    localStorage.setItem("emailTemplate", textValue);
-  };
   return (
     <div className="width100">
       <ToastContainer
@@ -89,61 +72,11 @@ const EmailTemplate: React.FC<Props> = (props: Props) => {
         style={{ fontSize: 14 }}
       />
       <Navbar selected={"EmailTemplate"} token={token} />
-      <div className="containerEmailCreator">
-        <p className="emailCreatorTo">
-          <span style={{ color: "#999" }}>To:</span> Find a contact method for
-          the potentials candidate
-        </p>
-        <p className="emailCreatorTo">
-          <span style={{ color: "#999" }}>Instructions:</span> {content}
-        </p>
-        <p className="emailCreatorTo">
-          <span style={{ color: "#999" }}>Tips:</span> <br></br>-The canidate
-          name and package name buttons allows you to fully customize the email
-          to your canadate, any line break formatting will be saved! <br></br>
-          -Once finished save the template using the{" "}
-          <span style={{ color: "#08960f", fontWeight: 700, fontSize: 17 }}>
-            Save Template
-          </span>{" "}
-          button! <br></br>-Your template will save even if you sign out, your
-          template is not saved anywhere other than your local storage
-        </p>
-        <div className="emailCreatorTemplateButtons">
-          <button
-            className="templateButton click"
-            onClick={() => {
-              setTextValue(textValue + "{{PACKAGENAME}}");
-              navigator.clipboard.writeText("{{PACKAGENAME}}");
-            }}
-          >
-            <FontAwesomeIcon icon={faCopy} /> Package Name
-          </button>
-          <button
-            onClick={() => {
-              setTextValue(textValue + "{{NAME}}");
-              navigator.clipboard.writeText("{{NAME}}");
-            }}
-            className="templateButton click"
-          >
-            {" "}
-            <FontAwesomeIcon icon={faCopy} /> Canidate Name
-          </button>
-          <button
-            onClick={() => {
-              saveTemplateToLocal();
-              templateSaved();
-            }}
-            className="templateButtonGreen click"
-          >
-            <FontAwesomeIcon icon={faCloudDownloadAlt} /> Save Template
-          </button>
-        </div>
-        <textarea
-          className="emailCreator"
-          value={textValue}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </div>
+      <EmailCreatorMain
+        textValue={textValue}
+        setTextValue={setTextValue}
+        content={content}
+      />
     </div>
   );
 };

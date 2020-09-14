@@ -1,25 +1,14 @@
 import * as React from "react";
 import queryString from "query-string";
 import "../styles/Home.scss";
-import {
-  faBoxOpen,
-  faHeart,
-  faSearchLocation,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAward } from "@fortawesome/free-solid-svg-icons";
-import { faUsers } from "@fortawesome/free-solid-svg-icons";
-import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
 import "react-responsive-modal/styles.css";
-import { Modal } from "react-responsive-modal";
 import Navbar from "../components/Navbar";
-import { css } from "@emotion/core";
-import HashLoader from "react-spinners/HashLoader";
+import HomeMain from "../components/HomeMain";
 import "react-toggle/style.css";
-import Toggle from "react-toggle";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
+import { copyEmail } from "../functions/copyEmail";
 import "react-toastify/dist/ReactToastify.css";
-//redux
+
 import { connect } from "react-redux";
 import { getUser } from "../actions/user";
 import { AppState } from "../store/configureStore";
@@ -27,11 +16,10 @@ import { ThunkDispatch } from "redux-thunk";
 import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
-import { RouteComponentProps, Link } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 // import { dumbyDataGraph } from "../functions/dumbyData";
 import { getLocalStorageData } from "../actions/data";
-import Person from "../components/Person";
-import ToggleSelect from "../components/ToggleSelect";
+import IsLoading from "../components/IsLoading";
 
 interface DispatchProps {}
 
@@ -70,12 +58,12 @@ const Home = (props: Props) => {
   const [whichSelected, setWhichSelected] = React.useState(true);
   const [dumbData, setDumbData] = React.useState(props.gridData);
   React.useEffect(() => {
-    var parsed = queryString.parse(window.location.search);
-    var accessToken: any = parsed.access_token;
-    props.getUser(accessToken);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!props.authenticated) {
+      var parsed = queryString.parse(window.location.search);
+      var accessToken: any = parsed.access_token;
+      props.getUser(accessToken);
+    }
+  }, [props]);
   React.useEffect(() => {
     if (props.gridData) {
       if (whichSelected) {
@@ -104,8 +92,7 @@ const Home = (props: Props) => {
         setToken(accessToken);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.loading]);
+  }, [props.loading, props.authenticated]);
   React.useEffect(() => {
     if (whichSelected) {
     }
@@ -122,69 +109,8 @@ const Home = (props: Props) => {
       console.log("Getting Data!");
       props.getLocalStorageData(JSON.parse(localStorageInfo), token);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token]);
+  }, [token, props]);
 
-  const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: red;
-  `;
-
-  const copyEmail = (canidateName: string, canidatePackage: string) => {
-    var email = localStorage.getItem("emailTemplate");
-    if (email === null || email === undefined) {
-      const defaultString = `Hello ${canidateName},\n I noticed your work at ${canidatePackage} and was impressed, would you be interested in having a conversion about possible careers? If so, reach out!\nSincerely`;
-      toast.warning(
-        "⚠️ Using Default Email Template, it is recommended to create your own Template!",
-        {
-          position: "top-right",
-          autoClose: 7000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-      toast.success("📧Template email with canidate info copied to clipboard", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      });
-      navigator.clipboard.writeText(defaultString);
-    } else {
-      const packageReplace = email.replace(/{{PACKAGENAME}}/g, canidatePackage);
-      const nameReplace = packageReplace.replace(/{{NAME}}/g, canidateName);
-      navigator.clipboard.writeText(nameReplace);
-      toast.success(
-        "📧Your Customized Email with canidate info was copied to clipboard",
-        {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        }
-      );
-    }
-  };
-  const goToLinkedIn = (name: string) => {
-    const nameArray = name.split(" ");
-    if (nameArray.length === 1) {
-      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}`;
-      window.open(link, "_blank");
-    } else {
-      const link = `https://www.linkedin.com/search/results/all/?keywords=${nameArray[0]}%20${nameArray[1]}`;
-      window.open(link, "_blank");
-    }
-  };
   return (
     <div>
       <ToastContainer
@@ -201,183 +127,19 @@ const Home = (props: Props) => {
       />
       <Navbar selected={"Home"} token={token} />
       {props.isLoading ? (
-        <div className="isLoadingHome">
-          {" "}
-          <HashLoader
-            css={override}
-            size={50}
-            color={"#8252fa"}
-            loading={props.isLoading}
-          />
-        </div>
+        <IsLoading isLoading={props.isLoading} />
       ) : (
-        <div className="home">
-          {dumbData && dumbData.length > 0 ? (
-            <ToggleSelect
-              whichSelected={whichSelected}
-              setWhichSelected={setWhichSelected}
-            />
-          ) : (
-            <div>
-              <ToggleSelect
-                whichSelected={whichSelected}
-                setWhichSelected={setWhichSelected}
-              />
-              <div className="maximumValue">
-                <p
-                  className="packageInfoMoreSingle"
-                  style={{ fontSize: 25, marginBottom: 40 }}
-                >
-                  <FontAwesomeIcon icon={faSearchLocation} /> You haven't
-                  Favorited anyone yet, find potential candidates using the easy
-                  to use explore feature <br></br> or view all with the Toggle
-                  Above
-                </p>
-                <Link
-                  to={"/find-canidates?access_token=" + token}
-                  className="templateButton click"
-                  style={{ textDecoration: "none", padding: 10 }}
-                >
-                  Explore Candidates
-                </Link>
-              </div>
-            </div>
-          )}
-
-          {dumbData ? (
-            <div className="wholeGrid">
-              {dumbData.map((person) => (
-                <Person
-                  person={person}
-                  copyEmail={copyEmail}
-                  setModalInfo={setModalInfo}
-                  setOpen={setOpen}
-                />
-              ))}
-            </div>
-          ) : (
-            <div></div>
-          )}
-          <Modal
-            open={open}
-            onClose={() => setOpen(false)}
-            center
-            classNames={{
-              overlay: "customOverlay",
-              modal: "customModal",
-            }}
-          >
-            <p className="moreAbout">More about {modalInfo.name}</p>
-
-            {modalInfo.avatarURL !== null && (
-              <img
-                src={modalInfo.avatarURL}
-                alt="Users Github Profile"
-                className="profilePictureMore"
-              />
-            )}
-            <h1 className="moreMainName">
-              {modalInfo.name}
-              <span className="location">{modalInfo.location}</span>
-            </h1>
-            <div className="moreAllPackageInfo">
-              <p className="packageNameMoreBold">
-                Package Info:{" "}
-                <span
-                  className="packageLink"
-                  onClick={() => window.open(modalInfo.packageRepo, "_blank")}
-                >
-                  {modalInfo.packageName}
-                </span>
-                <span className="stargazersMore">{modalInfo.starGazers}</span>
-                {"  "} <span className="packageInfoMore"> stargazers</span>
-                {"  "} <span className="stargazersMore"> Language: </span>
-                <span className="packageInfoMore">{modalInfo.language}</span>
-              </p>
-
-              <FontAwesomeIcon
-                icon={faAward}
-                size="2x"
-                className="awardIcon"
-                style={
-                  modalInfo.packageRank === 1
-                    ? { color: "#FFDF00" }
-                    : modalInfo.packageRank === 2
-                    ? { color: "	#C0C0C0" }
-                    : { color: "#cd7f32" }
-                }
-              />
-              <p className="packageInfoMore">
-                contributor #{modalInfo.packageRank}
-              </p>
-            </div>
-            <div className="ptags">
-              <p
-                className={modalInfo.bio !== null ? "infoPTag" : "displayNone"}
-              >
-                <span className="boldMore">Bio:</span>
-                {modalInfo.bio}
-              </p>
-              <p
-                className={
-                  modalInfo.company !== null ? "infoPTag" : "displayNone"
-                }
-              >
-                Company: {modalInfo.company}
-              </p>
-              {modalInfo.hireable ? (
-                <p className="infoPTag">Hireable: Yes</p>
-              ) : (
-                <div className="displayNone"></div>
-              )}
-              <div className="followers">
-                <p className="followerMargin">
-                  <span className="boldMore">
-                    <FontAwesomeIcon icon={faGithub} className="usersIcon" />
-                    Github Profile:
-                  </span>
-                  <span
-                    className="loginInfoMore"
-                    onClick={() => window.open(modalInfo.githubURL, "_blank")}
-                  >
-                    {modalInfo.login}
-                  </span>
-                </p>
-                <p className="followerMargin">
-                  <span className="boldMore">
-                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                    Followers:
-                  </span>
-                  {modalInfo.followers}
-                </p>
-
-                <p>
-                  <span className="boldMore">
-                    <FontAwesomeIcon icon={faUsers} className="usersIcon" />
-                    Following:
-                  </span>
-                  {modalInfo.following}
-                </p>
-              </div>
-              <p
-                onClick={() =>
-                  modalInfo.name !== null && goToLinkedIn(modalInfo.name)
-                }
-                className="loginInfoMoreSingle"
-                style={{
-                  fontSize: 16,
-                  fontWeight: 500,
-                  lineHeight: 1.1,
-                  marginTop: 20,
-                  marginBottom: 30,
-                  textAlign: "center",
-                }}
-              >
-                <FontAwesomeIcon icon={faLinkedin} /> LinkedIn Search
-              </p>
-            </div>
-          </Modal>
-        </div>
+        <HomeMain
+          modalInfo={modalInfo}
+          dumbData={dumbData}
+          whichSelected={whichSelected}
+          setWhichSelected={setWhichSelected}
+          token={token}
+          copyEmail={copyEmail}
+          setModalInfo={setModalInfo}
+          setOpen={setOpen}
+          open={open}
+        />
       )}
     </div>
   );

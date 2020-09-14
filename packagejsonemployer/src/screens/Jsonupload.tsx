@@ -1,13 +1,9 @@
 import * as React from "react";
-import UploadFile from "../components/UploadFile";
-import ReactJson from "react-json-view";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getData, setData } from "../actions/data";
 import queryString from "query-string";
 import { RouteComponentProps } from "react-router-dom";
-import { css } from "@emotion/core";
-import HashLoader from "react-spinners/HashLoader";
 //Redux
 import { connect } from "react-redux";
 import { getUser } from "../actions/user";
@@ -16,8 +12,9 @@ import { ThunkDispatch } from "redux-thunk";
 import { AppActions } from "../types/AppActions";
 import { dataObject, graphData } from "../types/DataObject";
 import { bindActionCreators } from "redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
+
+import BeforeGetInfo from "../components/BeforeGetInfo";
+import FindingContributors from "../components/FindingContributors";
 
 interface DispatchProps {
   getUser: typeof getUser;
@@ -47,15 +44,17 @@ const Jsonupload = (props: Props) => {
     if (props.tableData) {
       props.history.push(`/find-canidates?access_token=${token}`);
     }
-  }, [props.tableData]);
+  }, [props.tableData, props.history, token]);
   React.useEffect(() => {
-    var parsed = queryString.parse(window.location.search);
-    var accessToken: any = parsed.access_token;
-    props.getUser(accessToken);
-    localStorage.removeItem("favorites");
-    localStorage.removeItem("count");
-    localStorage.removeItem("packageRepo");
-  }, []);
+    if (!props.authenticated) {
+      var parsed = queryString.parse(window.location.search);
+      var accessToken: any = parsed.access_token;
+      props.getUser(accessToken);
+      localStorage.removeItem("favorites");
+      localStorage.removeItem("count");
+      localStorage.removeItem("packageRepo");
+    }
+  }, [props]);
   React.useEffect(() => {
     if (!props.loading) {
       if (!props.authenticated) {
@@ -66,152 +65,36 @@ const Jsonupload = (props: Props) => {
         setToken(accessToken);
       }
     }
-  }, [props.loading]);
-
-  const override = css`
-    display: block;
-    margin: 0 auto;
-    border-color: red;
-  `;
+  }, [props.loading, props.authenticated]);
 
   const updateJSON = (text: string) => {
     setJsonSource(text);
     setParsedJson(JSON.parse(text));
   };
-  const notifyNoUpload = () =>
-    toast.error("👮 Upload your package.JSON first!", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  const notify = () =>
-    toast.error("👮 Must be Package.json with dependencies", {
-      position: "top-center",
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    });
-  const gatherData = () => {
-    if (
-      parsedJson.dependencies !== "" &&
-      parsedJson.dependencies !== undefined
-    ) {
-      const stringedDependencies = JSON.stringify(
-        Object.getOwnPropertyNames(parsedJson.dependencies)
-      );
-      var noAtSymbol = stringedDependencies.replace(/@/g, "");
-      var firstElem: string[] = JSON.parse(noAtSymbol);
-      var returnedArray = firstElem.map((elem: string) => {
-        if (!elem.includes("testing")) {
-          if (elem.includes("/")) {
-            return elem.substr(0, elem.indexOf("/"));
-          } else {
-            return elem;
-          }
-        }
-      });
-      const uniqueSet = new Set(returnedArray);
-      //@ts-ignore
-      const backToArray = [...uniqueSet];
-      const noUndefined = backToArray.filter((elem) => elem !== undefined);
-      props.getData(noUndefined, token);
-      // props.setData();
-    } else if (parsedJson.dependencies === "") {
-      notifyNoUpload();
-    } else {
-      notify();
-    }
-  };
+
   return (
     <div>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {!props.isLoading ? (
-        <div className="jsonupload">
-          <ToastContainer
-            position="top-center"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-          />
-          <a href="https://hirecontributors.club/" className="backtoMarketing">
-            <FontAwesomeIcon
-              icon={faChevronCircleLeft}
-              color={"#007bff"}
-              size="3x"
-            />
-            <p style={{ color: "#007bff" }}>Back To Marketing Page</p>
-          </a>
-          <div className="headerUploadDocument">
-            <h1>Upload Your Package.json To Find Candidates</h1>
-            <p className="smallTextUpload">
-              All of your information is on the client side, none of your data
-              is saved.
-            </p>
-          </div>
-          <UploadFile updateJSON={updateJSON} />
-          <button className="templateButton click" onClick={gatherData}>
-            Submit
-          </button>
-          <div className="transition">
-            <ReactJson
-              src={jsonSource !== "" ? JSON.parse(jsonSource) : {}}
-              iconStyle="triangle"
-              theme="railscasts"
-              enableClipboard={false}
-              style={
-                jsonSource === ""
-                  ? { display: "none" }
-                  : {
-                      width: 1000,
-                      textAlign: "left",
-                      padding: 30,
-                      fontSize: 12,
-                    }
-              }
-              collapsed={1}
-              displayDataTypes={false}
-            />
-          </div>
-        </div>
+        <BeforeGetInfo
+          parsedJson={parsedJson}
+          token={token}
+          updateJSON={updateJSON}
+          jsonSource={jsonSource}
+          getData={props.getData}
+        />
       ) : (
-        <div className="marketing">
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              alignItems: "center",
-            }}
-          >
-            <HashLoader
-              css={override}
-              size={70}
-              color={"#8252fa"}
-              loading={true}
-            />
-            <p
-              style={{
-                color: "#8252fa",
-                fontSize: 30,
-                paddingTop: 20,
-                fontWeight: 700,
-              }}
-            >
-              Finding Contributors
-            </p>
-          </div>
-        </div>
+        <FindingContributors />
       )}
     </div>
   );
