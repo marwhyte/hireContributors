@@ -1,4 +1,4 @@
-import { notifyNoUpload, notify } from "./notify";
+import { notify, notifyNoUpload } from "./notify";
 
 export const gatherData = (
   parsedJson: {

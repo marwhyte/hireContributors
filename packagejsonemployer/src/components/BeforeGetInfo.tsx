@@ -2,8 +2,8 @@ import * as React from "react";
 import UploadFile from "../components/UploadFile";
 import ReactJson from "react-json-view";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 import { gatherData } from "../functions/gatherData";
+import { faChevronCircleLeft } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   jsonSource: string;

@@ -30,6 +30,7 @@ export const copyEmail = (canidateName: string, canidatePackage: string) => {
     const packageReplace = email.replace(/{{PACKAGENAME}}/g, canidatePackage);
     const nameReplace = packageReplace.replace(/{{NAME}}/g, canidateName);
     navigator.clipboard.writeText(nameReplace);
+
     toast.success(
       "📧Your Customized Email with canidate info was copied to clipboard",
       {

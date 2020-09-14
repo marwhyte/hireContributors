@@ -1,7 +1,7 @@
 import * as React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy, faCloudDownloadAlt } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import { faCopy, faCloudDownloadAlt } from "@fortawesome/free-solid-svg-icons";
 
 interface Props {
   textValue: string;

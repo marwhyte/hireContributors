@@ -1,6 +1,6 @@
 import * as React from "react";
-import { css } from "@emotion/core";
 import HashLoader from "react-spinners/HashLoader";
+import { css } from "@emotion/core";
 
 interface Props {
   isLoading: boolean;

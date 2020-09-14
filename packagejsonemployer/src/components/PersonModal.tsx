@@ -3,9 +3,9 @@ import { Modal } from "react-responsive-modal";
 import { faAward } from "@fortawesome/free-solid-svg-icons";
 import { faUsers } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faLinkedin } from "@fortawesome/free-brands-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { goToLinkedIn } from "../functions/goToLinkedIn";
 import { graphData } from "../types/DataObject";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Props {
   open: boolean;

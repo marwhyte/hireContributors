@@ -1,6 +1,6 @@
 import * as React from "react";
-import Person from "./Person";
 import ToggleSelect from "./ToggleSelect";
+import Person from "./Person";
 import { graphData } from "../types/DataObject";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearchLocation } from "@fortawesome/free-solid-svg-icons";
