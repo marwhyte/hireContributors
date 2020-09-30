@@ -94,10 +94,6 @@ const Home = (props: Props) => {
     }
   }, [props.loading, props.authenticated]);
   React.useEffect(() => {
-    if (whichSelected) {
-    }
-  }, [whichSelected, props.gridData]);
-  React.useEffect(() => {
     const localStorageInfo = localStorage.getItem("packageRepo");
     if (props.gridData) {
       console.log("Data In Redux Store");

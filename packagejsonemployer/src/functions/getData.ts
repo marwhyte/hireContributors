@@ -41,7 +41,6 @@ export async function getDependencyInfo(values: string[], token: string) {
       })
     )
       .then((values) => {
-        console.log("values", values);
         resolve(values);
       })
       .catch((err) => resolve(null));
@@ -68,7 +67,6 @@ export async function getContributorsInfo(
       })
     )
       .then((values) => {
-        console.log("values", values);
         resolve(values);
       })
       .catch((err) => resolve(null));
@@ -105,7 +103,6 @@ export async function getContributorsAccount(
       })
     )
       .then((values) => {
-        console.log("values", values);
         resolve(values);
       })
       .catch((err) => resolve(null));

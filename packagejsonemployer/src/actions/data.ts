@@ -13,14 +13,13 @@ import {
   getContributorsInfo,
   getDependencyInfo,
 } from "../functions/getData";
+
 export const getData = (dependencies: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());
     let packageRepos: string[] = [];
     let data: dataObject[] = [];
     let amountOfDependencies = dependencies.splice(0, 12);
-    let allIDS: number[] = [];
-    console.log(amountOfDependencies);
     let promiseAllDependencyInfo: string[] = amountOfDependencies.map(
       (item) =>
         `https://api.github.com/search/repositories?q=${item}&sort=stars&order=desc`
@@ -104,23 +103,6 @@ export const getData = (dependencies: string[], token: string) => {
       };
       data.push(dataTopush);
     }
-    data.forEach((item) =>
-      item.collaborators.forEach((collab) => allIDS.push(collab.id))
-    );
-
-    // const count = (theIDS: number[]) => {
-    //   //@ts-ignore
-    //   theIDS.reduce((a, b) => ({ ...a, [b]: (a[b] || 0) + 1 }), {}); // don't forget to initialize the accumulator
-    // };
-
-    // const duplicates = (dict: any) => Object.keys(dict).filter((a) => dict[a] > 1);
-
-    // const duplicatedIDS = duplicates(count(allIDS))
-    // data = data.map(item => item.collaborators.filter(collab => {
-    //   const stringCollabID = collab.id.toString()
-    //   return !duplicatedIDS.includes(stringCollabID)
-    // }
-    //   ));
 
     var tableFormattedData: graphData[] = [];
 
@@ -167,6 +149,7 @@ export const getData = (dependencies: string[], token: string) => {
     }
   };
 };
+
 export const getLocalStorageData = (parsedInfo: string[], token: string) => {
   return async (dispatch: Dispatch<AppActions>, getState: () => AppState) => {
     dispatch(postDataStart());

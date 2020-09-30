@@ -49,13 +49,23 @@ $purple: #007bff;
   padding: 18px;
   width: 200px;
   height: 350px;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15), 0 2px 3px rgba(0, 0, 0, 0.2);
-  margin: 40px;
-  border-radius: 3px;
+  background-color: white;
+
+  transition: all 150ms ease-in-out;
+  box-shadow: 0 10px 26px rgba(100, 110, 140, 0.1),
+    0 2px 4px rgba(100, 110, 140, 0.15);
+  position: relative;
+  border-radius: 7px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  &:hover {
+    transform: translate3D(0, -1px, 0);
+    box-shadow: 0 8px 22px rgba(100, 110, 140, 0.2),
+      0 5px 18px rgba(100, 110, 140, 0.25);
+    background-color: #fbfdff;
+  }
   .personButtons {
     width: 100%;
     display: flex;
