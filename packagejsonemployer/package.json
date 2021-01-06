@@ -22,7 +22,7 @@
     "@types/react-router": "^5.1.7",
     "@types/react-router-dom": "^5.1.5",
     "@types/react-toggle": "^4.0.2",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "filepond": "^4.13.7",
     "node-sass": "^4.14.1",
     "query-string": "^6.12.1",
