@@ -1,4 +1,4 @@
-# [hireContributors](https://www.hirecontributors.club/)
+# hireContributors
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/marwhyte/packageJSONemployer)
 ![GitHub contributors](https://img.shields.io/github/contributors/marwhyte/packageJSONemployer)
@@ -30,4 +30,4 @@ Alternatively see the GitHub documentation on [creating a pull request](https://
 
 ## Contact
 
-If you want to contact me visit [my portfolio](http://marcowhyte.com) or email me at **marcolwhyte@gmail.com**
+If you want to contact me visit [my portfolio](http://marcowhyte.com)
